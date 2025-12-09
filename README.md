@@ -181,12 +181,3 @@ Build and tooling:
 ### License
 
 This project is licensed under the MIT License — see `LICENSE` for details.
-
-### TODOs / Open Questions
-
-- Verify JitPack publication coordinates for this module. Current `publishing` block sets `artifactId = "Void"`; this
-  likely should be `Void-HTML` (or similar) for this repository.
-- Document any additional entry points or integration hooks beyond those covered by tests (`PageHandler.html`, metadata,
-  CSS routing helpers).
-- Provide examples for Tailwind CSS integration if `TailwindGen` is intended for external use.
-- Add a CHANGELOG and contribution guidelines if this project accepts external contributions.
