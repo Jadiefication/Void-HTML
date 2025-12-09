@@ -5,7 +5,7 @@ import io.voidx.dto.ResponseDTO
 import io.voidx.dto.buildResponse
 import io.voidx.dto.headers
 import io.voidx.page.Page
-import java.util.*
+import java.util.UUID
 
 /**
  * Internal page that serves a generated CSS asset at a unique UUID-backed path.
