@@ -70,7 +70,12 @@ tasks.register<JacocoReport>("jacocoRootReport") {
     group = "verification"
     description = "Generates an aggregate JaCoCo coverage report for all subprojects"
 
+    // Ensure tests in this project run first
     dependsOn("test")
+
+    // Explicitly ensure this project's jacocoTestReport runs before the aggregator.
+    // Gradle requires an explicit dependsOn for tasks that produce executionData used by another task.
+    tasks.findByName("jacocoTestReport")?.let { dependsOn(it) }
 
     // Collect execution data from subprojects
     executionData(
