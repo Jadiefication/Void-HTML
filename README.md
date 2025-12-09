@@ -5,7 +5,9 @@ A module add‑on for the Void framework that provides an HTML/CSS/JS DSL for bu
 ---
 
 ### Overview
+
 Void-HTML is a Kotlin DSL and utilities layer that makes it easy to:
+
 - Construct HTML via type‑safe generated element classes (for example `Div`, `H1`, `Img`, etc.).
 - Compose fragments with a small `fractal { ... }` container.
 - Render full HTML responses compatible with the Void framework's routing/page model.
@@ -14,6 +16,7 @@ Void-HTML is a Kotlin DSL and utilities layer that makes it easy to:
 This repository is a library (not a standalone application). You add it as a dependency to a Void-based service.
 
 ### Tech Stack
+
 - Language: Kotlin (JVM)
 - Build tool: Gradle (Kotlin DSL), Wrapper: Gradle 9.0.0
 - Kotlin: 2.2.20
@@ -22,14 +25,18 @@ This repository is a library (not a standalone application). You add it as a dep
 - Depends on: `com.github.Jadiefication:Void:2.0.0` (via JitPack)
 
 ### Requirements
+
 - JDK 21 (OpenJDK 21)
 - Gradle Wrapper (included): use `./gradlew` so you don’t need a local Gradle install
 - Internet access to fetch dependencies from Maven Central and JitPack
 
 ### Installation
-This project is intended to be consumed from JitPack. Coordinates and publication may vary; verify the artifact ID before use.
+
+This project is intended to be consumed from JitPack. Coordinates and publication may vary; verify the artifact ID
+before use.
 
 Gradle (Kotlin DSL):
+
 ```kotlin
 repositories {
     mavenCentral()
@@ -44,29 +51,33 @@ dependencies {
 ```
 
 Maven:
+
 ```xml
+
 <repositories>
-  <repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-  </repository>
-  <repository>
-    <id>central</id>
-    <url>https://repo1.maven.org/maven2/</url>
-  </repository>
-  </repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+    <repository>
+        <id>central</id>
+        <url>https://repo1.maven.org/maven2/</url>
+    </repository>
+</repositories>
 
 <dependencies>
-  <!-- TODO: Verify artifact coordinates -->
-  <dependency>
+<!-- TODO: Verify artifact coordinates -->
+<dependency>
     <groupId>com.github.Jadiefication</groupId>
     <artifactId>Void-HTML</artifactId>
     <version>VERSION</version>
-  </dependency>
+</dependency>
 </dependencies>
 ```
 
-Publishing note: The current `build.gradle.kts` uses `publishing` with `groupId = "com.github.Jadiefication"` and `artifactId = "Void"` and `version = 1.0`. If this is unintended for this module, adjust before tagging a release on GitHub for JitPack. See TODOs below.
+Publishing note: The current `build.gradle.kts` uses `publishing` with `groupId = "com.github.Jadiefication"` and
+`artifactId = "Void"` and `version = 1.0`. If this is unintended for this module, adjust before tagging a release on
+GitHub for JitPack. See TODOs below.
 
 ### Quick Start
 
@@ -96,7 +107,8 @@ You can also create a response with defaults:
 val response = createResponse(fractal { /* ...elements... */ })
 ```
 
-The DSL exposes generated elements under `io.voidx.html.generated.*` (e.g., `Div`, `H1`, `Img`, etc.) and containers like `Fractal` for text/fragment composition.
+The DSL exposes generated elements under `io.voidx.html.generated.*` (e.g., `Div`, `H1`, `Img`, etc.) and containers
+like `Fractal` for text/fragment composition.
 
 Page helpers are available to integrate with Void pages/handlers:
 
@@ -109,38 +121,47 @@ handler.html({
 }
 ```
 
-Including CSS resources packaged in your classpath `css/` folder is supported via page configuration (resources are exposed through routes and linked into metadata):
+Including CSS resources packaged in your classpath `css/` folder is supported via page configuration (resources are
+exposed through routes and linked into metadata):
 
 ```kotlin
 val page: Page = /* ... */
-page("site.css", "theme.css") // select resources by file name under resources/css
+    page("site.css", "theme.css") // select resources by file name under resources/css
 // Routing integration occurs when the page is added to the router.
 ```
 
 ### Commands
+
 - Build: `./gradlew build`
 - Run tests: `./gradlew test`
 - Publish to local Maven: `./gradlew publishToMavenLocal` (used by JitPack in `jitpack.yml`)
 - Generate JAR/Sources/Javadoc: `./gradlew jar sourcesJar javadocJar`
 
 ### Environment Variables
+
 No required environment variables are currently defined.
+
 - TODO: Document any runtime or build-time variables if/when introduced.
 
 ### Tests
+
 Tests are written with Kotlin test on JUnit Platform. Run:
+
 ```
 ./gradlew test
 ```
 
 Sample covered behaviors include:
+
 - Rendering HTML responses with correct headers and body content
 - Metadata rendering for title, external CSS/JS, and default tags
 - Element search utilities (by id/class) within composed trees
 - Initialization hooks that integrate HTML/CSS handling with the Void runtime
 
 ### Project Structure
+
 Key paths and packages:
+
 - `src/main/kotlin/io/voidx/html/generated/` — Generated element types (`Div`, `H1`, `Img`, ...)
 - `src/main/kotlin/io/voidx/html/` — Core DSL primitives (`Element`, `Fractal`, etc.)
 - `src/main/kotlin/io/voidx/html/page/` — Page helpers and utilities for integrating with Void routing/pages
@@ -149,17 +170,23 @@ Key paths and packages:
 - `src/test/kotlin/` — Unit tests and integration tests for the DSL and utilities
 
 Build and tooling:
-- `build.gradle.kts` — Kotlin/JVM library configuration, Java toolchain 21, Kotlin 2.2.20, JUnit Platform, publishing setup
+
+- `build.gradle.kts` — Kotlin/JVM library configuration, Java toolchain 21, Kotlin 2.2.20, JUnit Platform, publishing
+  setup
 - `settings.gradle.kts` — Root project name and toolchain resolver
 - `jitpack.yml` — JitPack build instructions (uses OpenJDK 21, publishes to local Maven)
 - `.github/workflows/ktlint.yml` — Ktlint checks (formatting/lint) [if configured in CI]
 - `.github/workflows/codeql.yml` — CodeQL analysis
 
 ### License
+
 This project is licensed under the MIT License — see `LICENSE` for details.
 
 ### TODOs / Open Questions
-- Verify JitPack publication coordinates for this module. Current `publishing` block sets `artifactId = "Void"`; this likely should be `Void-HTML` (or similar) for this repository.
-- Document any additional entry points or integration hooks beyond those covered by tests (`PageHandler.html`, metadata, CSS routing helpers).
+
+- Verify JitPack publication coordinates for this module. Current `publishing` block sets `artifactId = "Void"`; this
+  likely should be `Void-HTML` (or similar) for this repository.
+- Document any additional entry points or integration hooks beyond those covered by tests (`PageHandler.html`, metadata,
+  CSS routing helpers).
 - Provide examples for Tailwind CSS integration if `TailwindGen` is intended for external use.
 - Add a CHANGELOG and contribution guidelines if this project accepts external contributions.

@@ -1,6 +1,5 @@
 package io.voidx.css
 
-import io.voidx.css.CssPage
 import io.voidx.css.TailwindGen.grabTailwind
 import io.voidx.css.TailwindGen.processTailwind
 import io.voidx.html.Element

@@ -8,7 +8,6 @@ import io.voidx.html.generated.Div
 import io.voidx.html.generated.H2
 import io.voidx.html.metadata.Metadata
 import io.voidx.html.util.createResponse
-import io.voidx.page.Page
 import io.voidx.page.route
 import kotlin.test.Test
 import kotlin.test.assertEquals

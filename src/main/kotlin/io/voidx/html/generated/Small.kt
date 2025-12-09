@@ -1,6 +1,8 @@
 package io.voidx.html.generated
 
-import io.voidx.html.*
+import io.voidx.html.Attribute
+import io.voidx.html.Element
+import io.voidx.html.ElementWithChildren
 import kotlin.reflect.KClass
 
 fun Element.Small(

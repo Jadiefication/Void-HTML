@@ -2,8 +2,6 @@ package io.voidx.html.page
 
 import io.voidx.Method
 import io.voidx.css.CssPage
-import io.voidx.css.TailwindGen
-import io.voidx.dto.RequestDTO
 import io.voidx.dto.ResponseDTO
 import io.voidx.html.Element
 import io.voidx.html.fractal
@@ -11,9 +9,6 @@ import io.voidx.html.metadata.Metadata
 import io.voidx.html.metadata.metadata
 import io.voidx.html.router.RouterUtil
 import io.voidx.html.util.createResponse
-import io.voidx.page.DynamicPage
-import io.voidx.page.ExceptionPage
-import io.voidx.page.NotFoundPage
 import io.voidx.page.Page
 import io.voidx.page.PageHandler
 import io.voidx.router.Router

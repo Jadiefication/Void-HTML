@@ -2,7 +2,6 @@ package test
 
 import io.voidx.dto.ok
 import io.voidx.html.metadata.Metadata
-import io.voidx.page.Page
 import io.voidx.page.route
 import kotlin.test.Test
 import kotlin.test.assertTrue

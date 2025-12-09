@@ -1,14 +1,12 @@
 package test
 
 import io.voidx.dto.ResponseBody
-import io.voidx.dto.ok
 import io.voidx.html.Element
 import io.voidx.html.fractal
 import io.voidx.html.generated.Div
 import io.voidx.html.metadata.Metadata
-import io.voidx.html.router.RouterUtil // force object initialization
+import io.voidx.html.router.RouterUtil
 import io.voidx.html.util.createResponse
-import io.voidx.page.Page
 import io.voidx.page.route
 import io.voidx.util.HtmlIntegration
 import org.junit.jupiter.api.Test
