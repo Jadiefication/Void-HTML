@@ -41,7 +41,10 @@ var Page.metadata: Metadata?
  * Renders an HTML response by building a fractal [Element] tree and packaging it
  * into a [ResponseDTO]. If [metadata] is not set, a default one is created.
  */
-fun PageHandler.html(metadata: Metadata.() -> Unit, builder: Element.() -> Unit) {
+fun PageHandler.html(
+    metadata: Metadata.() -> Unit,
+    builder: Element.() -> Unit,
+) {
     val data = metadata(this, metadata)
     this.metadata = data
     responses[Method.GET] = { createResponse(fractal(builder), data) }

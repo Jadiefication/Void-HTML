@@ -1,6 +1,10 @@
 plugins {
     kotlin("jvm") version "2.2.20"
     `maven-publish`
+    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
+    // API docs generation
+    id("org.jetbrains.dokka") version "2.1.0"
+    id("jacoco")
 }
 
 group = "io.void"
@@ -44,4 +48,63 @@ publishing {
             version = rootProject.version.toString()
         }
     }
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+    // Run coverage report after tests
+    finalizedBy(tasks.named("jacocoTestReport"))
+}
+
+tasks.withType<JacocoReport>().configureEach {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
+    // Only run if tests ran
+    dependsOn(tasks.withType<Test>())
+}
+
+// Optional: aggregate coverage across modules
+tasks.register<JacocoReport>("jacocoRootReport") {
+    group = "verification"
+    description = "Generates an aggregate JaCoCo coverage report for all subprojects"
+
+    dependsOn("test")
+    dependsOn("ktlintKotlinScriptCheck")
+    dependsOn("docs:startScripts")
+
+    // Collect execution data from subprojects
+    executionData(
+        fileTree(project.rootDir) {
+            include("**/build/jacoco/test.exec")
+            include("**/build/jacoco/test.exec.gz")
+            include("**/build/jacoco/test.exec.zip")
+            include("**/build/jacoco/test.exec/**")
+            include("**/build/jacoco/test/*.exec")
+            include("**/build/jacoco/test.exec*")
+            include("**/build/jacoco/*.exec")
+            include("**/build/jacoco/*.ec")
+            include("**/build/jacoco/test/*.ec")
+        },
+    )
+
+    // Source sets for each subproject
+    subprojects.forEach { sub ->
+        val sourceSets = sub.extensions.findByName("sourceSets") as? SourceSetContainer
+        sourceSets?.findByName("main")?.let { main ->
+            sourceDirectories.from(main.allSource.srcDirs)
+            classDirectories.from(main.output)
+        }
+    }
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
+
+    // Ensure subproject reports are generated first
+    dependsOn(subprojects.mapNotNull { it.tasks.findByName("jacocoTestReport") })
 }

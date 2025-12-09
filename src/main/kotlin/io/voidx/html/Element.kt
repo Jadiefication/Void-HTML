@@ -2,8 +2,8 @@ package io.voidx.html
 
 import io.voidx.Method
 import io.voidx.dto.RequestDTO
-// import io.voidx.html.generated.Div
-// import io.voidx.html.generated.H2
+import io.voidx.html.generated.Div
+import io.voidx.html.generated.H2
 import java.util.Locale.getDefault
 
 /**
@@ -108,7 +108,7 @@ fun Element.loop(
  * Shorthand for a container div with sensible default Tailwind classes.
  * You can override/extend classes via [attrs].
  */
-/*fun Element.Container(
+fun Element.Container(
     vararg attrs: Pair<String, String>,
     content: Element.() -> Unit,
 ) = Div("class" to "container mx-auto px-4", *attrs, child = content)
@@ -139,7 +139,7 @@ fun Element.Section(
 ) = Div("class" to "mb-12", *attrs) {
     H2("class" to "text-2xl font-semibold mb-4") { Fractal(title) }
     content()
-}*/
+}
 
 /**
  * Enables the KTS attribute DSL on this element. Usage:
