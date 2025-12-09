@@ -1,7 +1,6 @@
 plugins {
     kotlin("jvm") version "2.2.20"
     `maven-publish`
-    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
     // API docs generation
     id("org.jetbrains.dokka") version "2.1.0"
     id("jacoco")
