@@ -72,8 +72,6 @@ tasks.register<JacocoReport>("jacocoRootReport") {
     description = "Generates an aggregate JaCoCo coverage report for all subprojects"
 
     dependsOn("test")
-    dependsOn("ktlintKotlinScriptCheck")
-    dependsOn("docs:startScripts")
 
     // Collect execution data from subprojects
     executionData(
@@ -90,13 +88,10 @@ tasks.register<JacocoReport>("jacocoRootReport") {
         },
     )
 
-    // Source sets for each subproject
-    subprojects.forEach { sub ->
-        val sourceSets = sub.extensions.findByName("sourceSets") as? SourceSetContainer
-        sourceSets?.findByName("main")?.let { main ->
-            sourceDirectories.from(main.allSource.srcDirs)
-            classDirectories.from(main.output)
-        }
+    val sourceSets = project.extensions.findByName("sourceSets") as? SourceSetContainer
+    sourceSets?.findByName("main")?.let { main ->
+        sourceDirectories.from(main.allSource.srcDirs)
+        classDirectories.from(main.output)
     }
 
     reports {
