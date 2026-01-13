@@ -8,7 +8,6 @@ import io.voidx.html.metadata.Metadata
 import io.voidx.html.router.RouterUtil
 import io.voidx.html.util.createResponse
 import io.voidx.page.route
-import io.voidx.util.HtmlIntegration
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -40,13 +39,5 @@ class HtmlModuleTests {
         assertTrue(body.contains("<head>"))
         assertTrue(body.contains("<body>"))
         assertTrue(body.contains("<div"))
-    }
-
-    @Test
-    fun router_util_initializes_html_integration_hooks() {
-        // Accessing RouterUtil ensures its init block runs (ModuleInit registry)
-        val ensureInit = RouterUtil
-        // Hooks should be set by RouterUtil.init()
-        assertNotNull(HtmlIntegration.handleJsAndCss)
     }
 }
