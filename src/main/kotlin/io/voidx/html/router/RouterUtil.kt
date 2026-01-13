@@ -20,11 +20,11 @@ import java.util.*
 /**
  * Wires the HTML module into the core runtime by registering integration hooks.
  *
+ * Implements [Bootstrap.Module] to participate in the application startup process.
+ *
  * Responsibilities:
- * - Expose a handler for KTS requests via [HtmlIntegration.getKtsPage].
- * - Discover and register embedded JS resources to [HtmlIntegration.jsPages].
- * - Provide a per-page hook [HtmlIntegration.handleJsAndCss] to attach CSS (Tailwind and external)
- *   and JS to newly added routes.
+ * - Register a special route handler to process KTS requests.
+ * - Wire up KTS pages with their corresponding request and trigger information.
  */
 object RouterUtil : Bootstrap.Module {
 
