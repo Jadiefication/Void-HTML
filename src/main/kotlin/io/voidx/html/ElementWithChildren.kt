@@ -60,21 +60,13 @@ abstract class ElementWithChildren internal constructor(
     }
 
     private fun isAccepted(child: Element): Boolean {
-        if (!acceptedChildren.contains(child::class) || child is Fractal) {
-            if (child is Fractal) {
-                if (child.children?.isNotEmpty() == true) {
-                    child.children!!.forEach { fChild ->
-                        return isAccepted(fChild)
-                    }
-                } else {
-                    return true
-                }
-            } else {
-                return false
+        if (child is Fractal) {
+            val children = child.children
+            if (!children.isNullOrEmpty()) {
+                return children.all { isAccepted(it) }
             }
-        } else {
             return true
         }
-        return false
+        return acceptedChildren.contains(child::class)
     }
 }

@@ -157,13 +157,12 @@ class ElementInternalTests {
     }
 
     @Test
-    @Ignore("Internal bug: Fractal recursive validation in isAccepted is broken")
     fun fragment_child_not_allowed_exception() {
         val parent = object : ElementWithChildren("parent") {
             override val acceptedChildren: MutableList<KClass<out Element>?> = mutableListOf(H1Node::class)
         }
         val frag = Fractal {
-            DivNode() // Should throw FragmentChildNotAllowedException because DivNode is not accepted
+            children!!.add(DivNode()) // Should throw FragmentChildNotAllowedException because DivNode is not accepted
         }
         parent.children!!.add(frag)
         assertFailsWith<FragmentChildNotAllowedException> {
@@ -180,7 +179,7 @@ class ElementInternalTests {
             DivNode()
         }
         parent.children!!.add(frag)
-        // Should NOT throw because DivNode is accepted recursively
+        // Should NOT throw because DivNode is not added
         parent.render()
     }
 
