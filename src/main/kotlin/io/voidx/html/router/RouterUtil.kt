@@ -1,6 +1,7 @@
 package io.voidx.html.router
 
 import io.voidx.Method
+import io.voidx.bootstrap.Bootstrap
 import io.voidx.css.CssPage
 import io.voidx.css.TailwindGen
 import io.voidx.dto.buildRequest
@@ -12,8 +13,6 @@ import io.voidx.html.page.addCssToRouter
 import io.voidx.html.page.metadata
 import io.voidx.router.Router
 import io.voidx.router.listResourcePaths
-import io.voidx.util.HtmlIntegration
-import io.voidx.util.ModuleInit
 import io.voidx.util.readResourceText
 import io.voidx.util.toResult
 import java.util.*
@@ -21,22 +20,21 @@ import java.util.*
 /**
  * Wires the HTML module into the core runtime by registering integration hooks.
  *
+ * Implements [Bootstrap.Module] to participate in the application startup process.
+ *
  * Responsibilities:
- * - Expose a handler for KTS requests via [HtmlIntegration.getKtsPage].
- * - Discover and register embedded JS resources to [HtmlIntegration.jsPages].
- * - Provide a per-page hook [HtmlIntegration.handleJsAndCss] to attach CSS (Tailwind and external)
- *   and JS to newly added routes.
+ * - Register a special route handler to process KTS requests.
+ * - Wire up KTS pages with their corresponding request and trigger information.
  */
-object RouterUtil : ModuleInit() {
-    @Volatile
-    private var initialized: Boolean = false
+object RouterUtil : Bootstrap.Module {
 
-    /** Called by the base module at startup to install integration hooks. */
-    override fun init() {
-        if (initialized) return
-        HtmlIntegration.registerKtsPage { target, query, requestDTO, clientHandler ->
-            if (routes.containsKey(target)) {
-                val page = routes[target] as KtsPage
+    override fun onRouterCreated(ctx: Bootstrap.Context) {
+        val router = ctx.router
+        Bootstrap.registerSpecialRoute { requestDTO, query, clientHandler ->
+            val target = requestDTO.target
+            val routes = router.routes
+            val page = routes[target]
+            if (page != null && page is KtsPage) {
                 page.queries = query
                 val route = requestDTO.headers["KTS-Route"]!!
                 val content = routes[route]!!.content()
@@ -50,38 +48,9 @@ object RouterUtil : ModuleInit() {
                 page.request = requestDTO
 
                 page.middlewareProcessBefore(requestDTO.toResult())
-                    ?: handleResponse(page, clientHandler, target)
+                    ?: router.handleResponse(page, clientHandler, target)
             } else {
-                emptyResponse()
-            }
-        }
-        HtmlIntegration.registerJsAndCss { route, router ->
-            route.addCssToRouter(router)
-            if (route::class != CssPage::class) {
-                route.request = buildRequest { method = Method.GET }
-                if (route.metadata != null) {
-                    if (route.includeTailwind) TailwindGen.processTailwind(route, router)
-                    if (route.includeKts) JsPage.addToMetadata(route, HtmlIntegration.jsPages.toList() as List<JsPage>)
-                }
-            }
-        }
-        val paths = listResourcePaths("js")
-        paths.forEach { path ->
-            val content = readResourceText("/$path", this::class.java)
-            val jsPage = JsPage(UUID.randomUUID(), content)
-            HtmlIntegration.addJsPage(jsPage)
-            Router.routers.forEach { it.addRoute(jsPage) }
-        }
-        initialized = true
-    }
-
-    // Ensure that merely referencing RouterUtil (object initialization) installs hooks in test environments
-    init {
-        if (!initialized) {
-            try {
-                init()
-            } catch (_: Throwable) {
-                // Swallow to avoid failing static init in environments lacking resources; tests can still proceed
+                null
             }
         }
     }
