@@ -2,6 +2,8 @@
 
 A module add‑on for the Void framework that provides an HTML/CSS/JS DSL for building pages and responses on the JVM.
 
+- Wiki: [DeepWiki](https://deepwiki.com/Void-Framework/Void-HTML)
+
 ---
 
 ### Overview
