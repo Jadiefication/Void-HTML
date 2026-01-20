@@ -65,18 +65,21 @@ object TailwindGen {
         resourceFile = cResponse.body()
     }
 
-    private fun handleElements(
-        element: Element,
-        page: Page,
-    ) {
-        // reuse putInTailwind to populate page.classAttributes
-        if (element.attributes.containsKey("class")) {
-            page.classAttributes.addAll(element.attributes["class"].split("\\s+".toRegex()))
+    private fun handleElements(element: Element?, page: Page) {
+        if (element == null) return
+
+        val attr = element.attributes["class"]
+        if (attr != null) {
+            val tokens = attr.split("\\s+".toRegex()).map { it.trim() }.filter { it.isNotEmpty() }
+            page.classAttributes.addAll(tokens)
         }
-        element.children?.forEach {
-            handleElements(it, page)
+
+        element.children?.forEach { child ->
+            // child should already be an Element type — adapt cast if your API differs
+            handleElements(child, page)
         }
     }
+
 
     /**
      * Normalize and escape classes to the form they appear in the tailwind CSS.
@@ -104,39 +107,44 @@ object TailwindGen {
      */
     private fun extractUsedCssBlocks(usedClassSelectors: Set<String>): String {
         val sb = StringBuilder()
+        val seen = mutableSetOf<String>()
 
-        // 1) include some global rules always (html, body, *, ::before, ::after)
+        // 1) global rules always (unchanged)
         val globalRegex =
             Regex("""(^|[\s,])(?:html|body|\*|::before|::after)[^{]*\{[^}]*}""", RegexOption.DOT_MATCHES_ALL)
         for (m in globalRegex.findAll(resourceFile)) {
-            sb.append(m.value).append("\n")
+            val block = m.value
+            if (seen.add(block)) sb.append(block).append("\n")
         }
 
-        // 2) non-media rules (selectors with a single declaration block)
-        // This will match selector blocks that are not part of an @media at the top-level.
-        val ruleRegex = Regex("""([^{@][^{}]*?)\{([^{}]*?)}""", RegexOption.DOT_MATCHES_ALL)
-        for (m in ruleRegex.findAll(resourceFile)) {
-            val selectorBlock = m.groupValues[1].trim()
-            val selectors = selectorBlock.split(",").map { it.trim() }
-
-            // match either exact selector or selector that starts with the class and then a pseudo, e.g.
-            // used ".hover\\:underline" matches CSS ".hover\\:underline:hover"
-            if (selectors.any { sel -> usedClassSelectors.any { used -> sel == used || sel.startsWith($$"$used:") } }) {
-                sb.append(m.value).append("\n")
+        // 2) handle media blocks first
+        val mediaRegex = Regex("""@media[^{]+\{(?:[^{}]|\{[^{}]*})*}""", RegexOption.DOT_MATCHES_ALL)
+        val mediaBlocks = mediaRegex.findAll(resourceFile).toList()
+        for (m in mediaBlocks) {
+            val mediaBlock = m.value
+            if (usedClassSelectors.any { mediaBlock.contains(it) }) {
+                if (seen.add(mediaBlock)) sb.append(mediaBlock).append("\n")
             }
         }
 
-        // 3) media query blocks — include whole block if any used selector appears inside it
-        val mediaRegex = Regex("""@media[^{]+\{(?:[^{}]|\{[^{}]*})*}""", RegexOption.DOT_MATCHES_ALL)
-        for (m in mediaRegex.findAll(resourceFile)) {
-            val mediaBlock = m.value
-            if (usedClassSelectors.any { mediaBlock.contains(it) }) {
-                sb.append(mediaBlock).append("\n")
+        // 3) match non-media top-level rules using a copy with media blocks removed
+        val noMedia = resourceFile.replace(mediaRegex, " ")
+        val ruleRegex = Regex("""([^{}@][^{}]*?)\{([^{}]*?)\}""", RegexOption.DOT_MATCHES_ALL)
+        for (m in ruleRegex.findAll(noMedia)) {
+            val selectorBlock = m.groupValues[1].trim()
+            val selectors = selectorBlock.split(",").map { it.trim() }
+            val matches = selectors.any { sel ->
+                usedClassSelectors.any { used -> sel == used || sel.startsWith(used) }
+            }
+            if (matches) {
+                val block = m.value
+                if (seen.add(block)) sb.append(block).append("\n")
             }
         }
 
         return sb.toString()
     }
+
 
     /**
      * Parse a raw class like "sm:hover:mb-[7px]" and, if it is an arbitrary value utility we support,
@@ -338,7 +346,7 @@ fun <T> List<Pair<T, *>>.containsKey(key: T): Boolean = any { it.first == key }
 /**
  * Retrieves the second component for the first pair whose first component equals [key].
  */
-operator fun <N, M> List<Pair<N, M>>.get(key: N): M = first { it.first == key }.second
+operator fun <N, M> List<Pair<N, M>>.get(key: N): M? = firstOrNull() { it.first == key }?.second
 
 /**
  * Convenience delegate to register a space-separated list of Tailwind classes

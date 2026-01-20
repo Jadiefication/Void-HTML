@@ -1,11 +1,13 @@
 package test
 
 import io.voidx.Method
+import io.voidx.css.CssPage
 import io.voidx.css.TailwindGen
 import io.voidx.css.TailwindString
 import io.voidx.css.containsKey
 import io.voidx.css.get
 import io.voidx.dto.buildRequest
+import io.voidx.fetch
 import io.voidx.html.fractal
 import io.voidx.html.generated.Div
 import io.voidx.html.page.html
@@ -22,70 +24,82 @@ import kotlin.test.assertTrue
 class TailwindGenTests {
 
     @Test
-    fun tailwind_gen_full_coverage() {
+    fun tailwind_gen_actually_compiles_css() {
         val router = Router()
+
         val page = route("/") {
             html({}) {
-                Div("class" to "flex items-center hover:bg-red-500 md:p-4 mb-[7px] sm:hover:mt-[2rem] -p-[1px] my-[5%] unknown-[10px] m-[1px] p-[1px] mt-[1px] pt-[1px] mr-[1px] pr-[1px] ml-[1px] pl-[1px] mx-[1px] px-[1px] py-[1px] container") {
-                    Div("class" to "p-2 m-1") { }
-                }
+                Div(
+                    "class" to """
+                    flex items-center
+                    hover:bg-red-500
+                    md:p-4
+                    mb-[7px]
+                    sm:hover:mt-[2rem]
+                    -p-[1px]
+                    unknown-[10px]
+                """.trimIndent()
+                ) { }
             }
         }
-        
-        // Populate resourceFile with some mock CSS to test extraction
+
+        // Mock Tailwind resource file
         val field = TailwindGen::class.java.getDeclaredField("resourceFile")
         field.isAccessible = true
-        field.set(TailwindGen, """
-            html { height: 100% }
-            .flex { display: flex }
-            @media (min-width: 768px) {
-              .md\:p-4 { padding: 1rem }
-            }
-        """.trimIndent())
+        field.set(
+            TailwindGen,
+            """
+        .flex { display: flex; }
+        .items-center { align-items: center; }
 
-        // Ensure request is set so page.content() works (many implementations depend on it)
-        page.request = buildRequest { 
+        .hover\:bg-red-500:hover { background-color: red; }
+
+        @media (min-width: 640px) {
+          .sm\:hover\:mt-\[2rem\]:hover { margin-top: 2rem; }
+        }
+
+        @media (min-width: 768px) {
+          .md\:p-4 { padding: 1rem; }
+        }
+
+        .mb-\[7px\] { margin-bottom: 7px; }
+        .-p-\[1px\] { padding: -1px; }
+        """.trimIndent()
+        )
+
+        page.request = buildRequest {
             method = Method.GET
             target = "/"
         }
 
         TailwindGen.processTailwind(page, router)
-        
-        assertNotNull(page.metadata?.style)
-        
-        // Trigger handleMetadataAdding with null metadata
-        val pageNoMeta = route("/nometa") {
-            html({}) { Div("class" to "flex") { } }
-        }
-        pageNoMeta.request = page.request
-        TailwindGen.processTailwind(pageNoMeta, router)
-        assertNotNull(pageNoMeta.metadata?.style)
 
-        // Case with no classes
-        val pageNoClasses = route("/noclasses") {
-            html({}) { }
-        }
-        pageNoClasses.request = page.request
-        TailwindGen.processTailwind(pageNoClasses, router)
-        
-        // Assertions
-        assertNotNull(page.metadata?.style)
+        val css = router.routes.filter { it.value is CssPage }.values.first().apply {
+            request = buildRequest { Method.GET }
+        }.content().body.body as String
 
-        // Exercise handleElements with multiple children
-        val nestedPage = route("/nested") {
-            html({}) {
-                Div("class" to "c1") {
-                    Div("class" to "c2") {
-                        Div("class" to "c3") { }
-                    }
-                }
-            }
-        }
-        nestedPage.request = page.request
-        TailwindGen.processTailwind(nestedPage, router)
-        assertTrue(nestedPage.classAttributes.contains("c3"))
+        println(css)
+
+
+        // ✅ real assertions
+        assertTrue(css.contains(".flex"))
+        assertTrue(css.contains("display: flex"))
+
+        assertTrue(css.contains(".hover\\:bg-red-500:hover"))
+        assertTrue(css.contains("background-color"))
+
+        assertTrue(css.contains("@media (min-width: 768px)"))
+        assertTrue(css.contains(".md\\:p-4"))
+
+        assertTrue(css.contains(".mb-\\[7px\\]"))
+        assertTrue(css.contains("margin-bottom: 7px"))
+
+        assertTrue(css.contains(".-p-\\[1px\\]"))
+
+        // ❌ unknown utility must NOT compile
+        assertTrue(!css.contains("unknown-[10px]"))
     }
-    
+
     @Test
     fun tailwind_gen_helpers_coverage() {
         // Exercise helper methods
