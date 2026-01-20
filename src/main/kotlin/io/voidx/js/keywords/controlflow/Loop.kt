@@ -1,13 +1,13 @@
-package io.void.js.keywords.controlflow
+package io.voidx.js.keywords.controlflow
 
-import io.void.js.JavaScript
-import io.void.js.Function
-import io.void.js.FunctionVariable
+import io.voidx.js.Function
+import io.voidx.js.FunctionVariable
+import io.voidx.js.JavaScript
 
 data class While(
     val condition: String,
     val _body: JavaScript.(List<FunctionVariable<*>>) -> Unit
-): Function<Nothing>(
+) : Function<Nothing>(
     name = "",
     arguments = emptyList(),
     body = _body
@@ -23,7 +23,7 @@ data class While(
 data class For(
     val condition: String,
     val _body: JavaScript.(List<FunctionVariable<*>>) -> Unit
-): Function<Nothing>(
+) : Function<Nothing>(
     name = "",
     arguments = emptyList(),
     body = _body

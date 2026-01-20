@@ -1,15 +1,14 @@
-package io.void.js.keywords.error
+package io.voidx.js.keywords.error
 
-import io.void.js.JavaScript
-import io.void.js.Function
-import io.void.js.FunctionVariable
-import io.void.js.keywords.Keyword
-import io.void.js.keywords.Reference
-import io.void.js.keywords.refer
+import io.voidx.js.keywords.Reference
+import io.voidx.js.keywords.refer
+import io.voidx.js.Function
+import io.voidx.js.FunctionVariable
+import io.voidx.js.JavaScript
 
 data class Try(
     val _body: JavaScript.(List<FunctionVariable<*>>) -> Unit
-): Function<Nothing>(
+) : Function<Nothing>(
     name = "",
     body = _body
 ) {

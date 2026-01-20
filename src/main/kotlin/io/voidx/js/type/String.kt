@@ -1,11 +1,11 @@
-package io.void.js.type
+package io.voidx.js.type
 
-import io.void.js.JavaScript
-import io.void.js.keywords.JsValue
-import io.void.js.keywords.Keyword
-import io.void.js.keywords.Reference
-import io.void.js.keywords.datastructures.JsList
-import io.void.js.keywords.emptyJsValue
+import io.voidx.js.keywords.JsValue
+import io.voidx.js.keywords.Keyword
+import io.voidx.js.keywords.Reference
+import io.voidx.js.keywords.datastructures.JsList
+import io.voidx.js.keywords.emptyJsValue
+import io.voidx.js.JavaScript
 
 class JsString(baseString: JsValue<String>) : Keyword {
 
@@ -60,7 +60,11 @@ class JsString(baseString: JsValue<String>) : Keyword {
         return ""
     }
 
-    fun split(separator: JsValue<String>, limit: JsValue<Int>? = null, call: (JsList<String>) -> Unit): Reference<JsString> {
+    fun split(
+        separator: JsValue<String>,
+        limit: JsValue<Int>? = null,
+        call: (JsList<String>) -> Unit
+    ): Reference<JsString> {
         jsReturn += ".split($separator${if (limit != null) ", $limit" else ""})"
         return applyMethods(call, JsList(emptyJsValue() as JsValue<String>), this)
     }
@@ -125,7 +129,11 @@ class JsString(baseString: JsValue<String>) : Keyword {
         return -1
     }
 
-    fun localeCompare(compareString: JsValue<String>, locales: JsValue<String>? = null, options: JsValue<String>? = null): Int {
+    fun localeCompare(
+        compareString: JsValue<String>,
+        locales: JsValue<String>? = null,
+        options: JsValue<String>? = null
+    ): Int {
         jsReturn += ".localeCompare($compareString${if (locales != null) ", $locales" else ""}${if (options != null) ", $options" else ""})"
         return 0
     }
@@ -179,19 +187,32 @@ fun JavaScript.substring(baseString: JsValue<String>, start: JsValue<Int>, end: 
     return jsString.substring(start, end)
 }
 
-fun JavaScript.replace(baseString: JsValue<String>, searchValue: JsValue<String>, replaceValue: JsValue<String>): String {
+fun JavaScript.replace(
+    baseString: JsValue<String>,
+    searchValue: JsValue<String>,
+    replaceValue: JsValue<String>
+): String {
     val jsString = JsString(baseString)
     children.add(jsString)
     return jsString.replace(searchValue, replaceValue)
 }
 
-fun JavaScript.replaceAll(baseString: JsValue<String>, searchValue: JsValue<String>, replaceValue: JsValue<String>): String {
+fun JavaScript.replaceAll(
+    baseString: JsValue<String>,
+    searchValue: JsValue<String>,
+    replaceValue: JsValue<String>
+): String {
     val jsString = JsString(baseString)
     children.add(jsString)
     return jsString.replaceAll(searchValue, replaceValue)
 }
 
-fun JavaScript.split(baseString: JsValue<String>, separator: JsValue<String>, limit: JsValue<Int>? = null, call: (JsList<String>) -> Unit): Reference<JsString> {
+fun JavaScript.split(
+    baseString: JsValue<String>,
+    separator: JsValue<String>,
+    limit: JsValue<Int>? = null,
+    call: (JsList<String>) -> Unit
+): Reference<JsString> {
     val jsString = JsString(baseString)
     val result = jsString.split(separator, limit, call)
     children.add(jsString)
@@ -228,13 +249,21 @@ fun JavaScript.trimEnd(baseString: JsValue<String>): String {
     return jsString.trimEnd()
 }
 
-fun JavaScript.startsWith(baseString: JsValue<String>, searchString: JsValue<String>, position: JsValue<Int>? = null): Boolean {
+fun JavaScript.startsWith(
+    baseString: JsValue<String>,
+    searchString: JsValue<String>,
+    position: JsValue<Int>? = null
+): Boolean {
     val jsString = JsString(baseString)
     children.add(jsString)
     return jsString.startsWith(searchString, position)
 }
 
-fun JavaScript.endsWith(baseString: JsValue<String>, searchString: JsValue<String>, length: JsValue<Int>? = null): Boolean {
+fun JavaScript.endsWith(
+    baseString: JsValue<String>,
+    searchString: JsValue<String>,
+    length: JsValue<Int>? = null
+): Boolean {
     val jsString = JsString(baseString)
     children.add(jsString)
     return jsString.endsWith(searchString, length)
@@ -246,19 +275,31 @@ fun JavaScript.repeat(baseString: JsValue<String>, count: JsValue<Int>): String 
     return jsString.repeat(count)
 }
 
-fun JavaScript.padStart(baseString: JsValue<String>, targetLength: JsValue<Int>, padString: JsValue<String>? = null): String {
+fun JavaScript.padStart(
+    baseString: JsValue<String>,
+    targetLength: JsValue<Int>,
+    padString: JsValue<String>? = null
+): String {
     val jsString = JsString(baseString)
     children.add(jsString)
     return jsString.padStart(targetLength, padString)
 }
 
-fun JavaScript.padEnd(baseString: JsValue<String>, targetLength: JsValue<Int>, padString: JsValue<String>? = null): String {
+fun JavaScript.padEnd(
+    baseString: JsValue<String>,
+    targetLength: JsValue<Int>,
+    padString: JsValue<String>? = null
+): String {
     val jsString = JsString(baseString)
     children.add(jsString)
     return jsString.padEnd(targetLength, padString)
 }
 
-fun JavaScript.match(baseString: JsValue<String>, regexp: JsValue<String>, call: (JsList<String>) -> Unit): Reference<JsString> {
+fun JavaScript.match(
+    baseString: JsValue<String>,
+    regexp: JsValue<String>,
+    call: (JsList<String>) -> Unit
+): Reference<JsString> {
     val jsString = JsString(baseString)
     val result = jsString.match(regexp, call)
     children.add(jsString)
@@ -271,7 +312,12 @@ fun JavaScript.search(baseString: JsValue<String>, regexp: JsValue<String>): Int
     return jsString.search(regexp)
 }
 
-fun JavaScript.localeCompare(baseString: JsValue<String>, compareString: JsValue<String>, locales: JsValue<String>? = null, options: JsValue<String>? = null): Int {
+fun JavaScript.localeCompare(
+    baseString: JsValue<String>,
+    compareString: JsValue<String>,
+    locales: JsValue<String>? = null,
+    options: JsValue<String>? = null
+): Int {
     val jsString = JsString(baseString)
     children.add(jsString)
     return jsString.localeCompare(compareString, locales, options)

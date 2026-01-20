@@ -1,8 +1,8 @@
-package io.void.js.keywords
+package io.voidx.js.keywords
 
-data class Reference<T: Keyword>(
+data class Reference<T : Keyword>(
     private val keywordProvider: () -> T
-): Keyword {
+) : Keyword {
 
     override var jsReturn: String = ""
         get() = keywordProvider().render()
@@ -17,6 +17,6 @@ data class Reference<T: Keyword>(
 }
 
 
-fun <T: Keyword> T.refer(): Reference<T> {
+fun <T : Keyword> T.refer(): Reference<T> {
     return Reference { this }
 }

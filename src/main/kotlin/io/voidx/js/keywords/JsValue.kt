@@ -1,9 +1,9 @@
-package io.void.js.keywords
+package io.voidx.js.keywords
 
-import io.void.html.Element
-import io.void.js.keywords.string.TemplateString
-import io.void.js.keywords.variable.Variable
-import io.void.js.Function
+import io.voidx.js.keywords.string.TemplateString
+import io.voidx.js.keywords.variable.Variable
+import io.voidx.html.Element
+import io.voidx.js.Function
 
 interface JsValue<T> {
     fun toJs(): String
@@ -21,6 +21,7 @@ data class DirectValue<T>(internal val value: T) : JsValue<T> {
                 "\"$value\""
             }
         }
+
         is Keyword -> value.render()
         is Element -> {
             val render = value.render()
@@ -30,10 +31,12 @@ data class DirectValue<T>(internal val value: T) : JsValue<T> {
                 "\"$render\""
             }
         }
+
         is Iterable<*> -> value.joinToString(",") { DirectValue(it).toJs() }
         is Number, Boolean -> value.toString()
         else -> "\"$value\""
     }
+
     override fun toString(): String {
         return toJs()
     }
@@ -47,20 +50,22 @@ data class VariableValue<T>(internal val variable: Variable<T>) : JsValue<T> {
     }
 }
 
-data class FunctionValue<T>(internal val function: Function<T>, internal val argsList: JsValue<*> = emptyJsValue()) : JsValue<T> {
+data class FunctionValue<T>(internal val function: Function<T>, internal val argsList: JsValue<*> = emptyJsValue()) :
+    JsValue<T> {
     override fun toJs(): String = function.run(argsList)
     override fun toString(): String {
         return toJs()
     }
 }
 
-class Undefined: JsValue<Nothing> {
+class Undefined : JsValue<Nothing> {
     override fun toJs(): String = "undefined"
     override fun toString(): String {
         return toJs()
     }
 }
-class Null: JsValue<Nothing> {
+
+class Null : JsValue<Nothing> {
     override fun toJs(): String = "null"
     override fun toString(): String {
         return toJs()

@@ -1,15 +1,13 @@
-package io.void.js.keywords.event
+package io.voidx.js.keywords.event
 
-import io.void.js.JavaScript
-import io.void.js.data.DataHandler
-import io.void.js.data.randomString
-import io.void.js.keywords.JsValue
-import io.void.js.keywords.Keyword
-import io.void.js.keywords.asJsValue
-import io.void.js.keywords.variable.Const
+import io.voidx.js.data.randomString
+import io.voidx.js.keywords.JsValue
+import io.voidx.js.keywords.Keyword
+import io.voidx.js.keywords.variable.Const
+import io.voidx.js.JavaScript
 
-interface JsEvent: Keyword
-data class CustomEvent(val eventName: JsValue<*>, val parent: JavaScript): JsEvent {
+interface JsEvent : Keyword
+data class CustomEvent(val eventName: JsValue<*>, val parent: JavaScript) : JsEvent {
 
     val variable = Const(name = String.randomString(5), value = "new Event($eventName)", parent = parent)
     override var jsReturn: String = variable.render()
@@ -29,7 +27,7 @@ data class CustomEvent(val eventName: JsValue<*>, val parent: JavaScript): JsEve
     }
 }
 
-data class DefaultEvent(val eventName: String): JsEvent {
+data class DefaultEvent(val eventName: String) : JsEvent {
     override var jsReturn: String = "\"$eventName\""
 
     override fun render(): String {

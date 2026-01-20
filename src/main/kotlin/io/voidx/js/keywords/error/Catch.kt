@@ -1,13 +1,13 @@
-package io.void.js.keywords.error
+package io.voidx.js.keywords.error
 
-import io.void.js.JavaScript
-import io.void.js.Function
-import io.void.js.FunctionVariable
+import io.voidx.js.Function
+import io.voidx.js.FunctionVariable
+import io.voidx.js.JavaScript
 
 data class CatchFunction(
     val _body: JavaScript.(List<FunctionVariable<*>>) -> Unit,
     val errorName: String
-): Function<Nothing>(
+) : Function<Nothing>(
     name = "",
     body = _body,
     arguments = listOf(errorName)
@@ -22,7 +22,7 @@ data class CatchFunction(
 
 data class Catch(
     val _body: CatchFunction
-): Function<Nothing>(
+) : Function<Nothing>(
     name = "",
     body = _body._body
 ) {

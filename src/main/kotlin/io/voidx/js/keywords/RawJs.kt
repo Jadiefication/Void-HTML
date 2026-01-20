@@ -1,10 +1,10 @@
-package io.void.js.keywords
+package io.voidx.js.keywords
 
-import io.void.js.JavaScript
+import io.voidx.js.JavaScript
 
 data class RawJs(
     val operation: String
-): Keyword {
+) : Keyword {
 
     override var jsReturn: String = operation
     override fun render(): String {

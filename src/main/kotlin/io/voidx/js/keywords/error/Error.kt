@@ -1,14 +1,13 @@
-package io.void.js.keywords.error
+package io.voidx.js.keywords.error
 
-import io.void.js.JavaScript
-import io.void.js.keywords.JsValue
-import io.void.js.keywords.Keyword
-import io.void.js.keywords.string.TemplateString
+import io.voidx.js.keywords.JsValue
+import io.voidx.js.keywords.Keyword
+import io.voidx.js.JavaScript
 
 data class Error(
     val message: JsValue<*>,
     val extraData: JsValue<*>
-): Keyword {
+) : Keyword {
 
     override var jsReturn: String = "new Error($message,$extraData)"
 

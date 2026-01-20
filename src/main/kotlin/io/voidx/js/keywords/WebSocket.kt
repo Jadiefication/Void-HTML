@@ -1,10 +1,7 @@
-package io.void.js.websocket
+package io.voidx.js.keywords
 
-import io.void.js.JavaScript
-import io.void.js.keywords.BrowserObject
-import io.void.js.keywords.JsValue
-import io.void.js.keywords.Reference
-import io.void.js.keywords.datastructures.JsList
+import io.voidx.js.keywords.datastructures.JsList
+import io.voidx.js.JavaScript
 
 class WebSocket : BrowserObject {
 

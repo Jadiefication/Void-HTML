@@ -1,21 +1,21 @@
-package io.void.js.keywords.controlflow
+package io.voidx.js.keywords.controlflow
 
-import io.void.js.JavaScript
-import io.void.js.Function
-import io.void.js.FunctionVariable
-import io.void.js.keywords.Keyword
+import io.voidx.js.keywords.Keyword
+import io.voidx.js.Function
+import io.voidx.js.FunctionVariable
+import io.voidx.js.JavaScript
 
 data class If(
     val condition: String,
     val _body: JavaScript.(List<FunctionVariable<*>>) -> Unit
-): Function<Nothing>(
+) : Function<Nothing>(
     name = "",
     arguments = emptyList(),
     body = _body
 ) {
 
     private fun renderBlock(statements: List<Keyword>): String {
-        return statements.joinToString(";") { 
+        return statements.joinToString(";") {
             val rendered = it.render()
             if (!rendered.endsWith(";")) "$rendered;" else rendered
         }

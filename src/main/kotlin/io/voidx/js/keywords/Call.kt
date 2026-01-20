@@ -1,23 +1,24 @@
-package io.void.js.keywords
+package io.voidx.js.keywords
 
-import io.void.js.JavaScript
+import io.voidx.js.JavaScript
 
 @ConsistentCopyVisibility
-data class Call<T: Keyword> internal constructor(val variableName: String): Keyword {
+data class Call<T : Keyword> internal constructor(val variableName: String) : Keyword {
 
     override var jsReturn = ""
 
-    constructor(variableName: JsValue<*>, callableFunction: String): this(variableName.toString()) {
+    constructor(variableName: JsValue<*>, callableFunction: String) : this(variableName.toString()) {
         jsReturn = "$variableName.$callableFunction"
     }
 
-    constructor(variableName: JsValue<*>, callableMethod: T.() -> Any, clazz: T): this(variableName.toString()) {
+    constructor(variableName: JsValue<*>, callableMethod: T.() -> Any, clazz: T) : this(variableName.toString()) {
         clazz.callableMethod()
-        jsReturn = "$variableName${if (clazz.jsReturn.startsWith(".")){
-            ""
-        } else {
-            "."
-        }
+        jsReturn = "$variableName${
+            if (clazz.jsReturn.startsWith(".")) {
+                ""
+            } else {
+                "."
+            }
         }${clazz.jsReturn}"
     }
 
@@ -35,7 +36,11 @@ inline fun <reified T : Keyword> JavaScript.call(variableName: JsValue<*>, calla
     return call
 }
 
-inline fun <reified T : Keyword> JavaScript.call(variableName: JsValue<*>, noinline callableMethod: T.() -> Any, clazz: T): Call<T> {
+inline fun <reified T : Keyword> JavaScript.call(
+    variableName: JsValue<*>,
+    noinline callableMethod: T.() -> Any,
+    clazz: T
+): Call<T> {
     val call = Call(
         variableName = variableName,
         callableMethod = callableMethod,

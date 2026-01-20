@@ -1,4 +1,4 @@
-package io.void.js.keywords
+package io.voidx.js.keywords
 
 private var _await: Boolean = false
 private var _typeOf: Boolean = false
@@ -37,7 +37,12 @@ interface Keyword {
         jsReturn += element.render()
         return objectToRefer.refer()
     }
-    fun <M : Keyword, N : Keyword> applyNullableMethods(call: (M?) -> Unit, element: M?, objectToRefer: N): Reference<N> {
+
+    fun <M : Keyword, N : Keyword> applyNullableMethods(
+        call: (M?) -> Unit,
+        element: M?,
+        objectToRefer: N
+    ): Reference<N> {
         call(element)
         jsReturn += element?.render()
         return objectToRefer.refer()

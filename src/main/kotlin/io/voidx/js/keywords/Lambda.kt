@@ -1,18 +1,19 @@
-package io.void.js.keywords
+package io.voidx.js.keywords
 
-import io.void.js.JavaScript
-import io.void.js.Function
-import io.void.js.FunctionVariable
+import io.voidx.js.Function
+import io.voidx.js.FunctionVariable
+import io.voidx.js.JavaScript
 
 data class Lambda<T>(
     val _arguments: List<String>,
     val _body: JavaScript.(List<FunctionVariable<*>>) -> Unit,
-): Function<T>(
+) : Function<T>(
     name = "",
     body = _body,
     arguments = _arguments
 ) {
-    override var jsReturn: String = "(${_arguments.joinToString(", ")}) => {${children.joinToString(";") { it.render() }}}"
+    override var jsReturn: String =
+        "(${_arguments.joinToString(", ")}) => {${children.joinToString(";") { it.render() }}}"
 
     override fun render(): String {
         return jsReturn
@@ -23,7 +24,10 @@ data class Lambda<T>(
     }
 }
 
-inline fun <reified T> JavaScript.lambda(noinline body: JavaScript.(List<FunctionVariable<*>>) -> Unit, arguments: List<String>): Lambda<T> {
+inline fun <reified T> JavaScript.lambda(
+    noinline body: JavaScript.(List<FunctionVariable<*>>) -> Unit,
+    arguments: List<String>
+): Lambda<T> {
     val lambda = Lambda<T>(
         _body = body,
         _arguments = arguments

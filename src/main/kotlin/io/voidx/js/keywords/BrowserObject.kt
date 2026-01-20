@@ -1,14 +1,13 @@
-package io.void.js.keywords
+package io.voidx.js.keywords
 
-import io.void.js.FunctionVariable
-import io.void.js.JavaScript
-import io.void.js.keywords.event.Event
-import io.void.js.keywords.event.EventFunction
-import io.void.js.keywords.event.JsEvent
-import io.void.js.keywords.event.exception.FunctionNotVariableException
-import java.lang.UnsupportedOperationException
+import io.voidx.js.keywords.event.Event
+import io.voidx.js.keywords.event.EventFunction
+import io.voidx.js.keywords.event.JsEvent
+import io.voidx.js.keywords.event.exception.FunctionNotVariableException
+import io.voidx.js.FunctionVariable
+import io.voidx.js.JavaScript
 
-interface BrowserObject: Keyword {
+interface BrowserObject : Keyword {
 
     fun on(_eventType: JsValue<JsEvent>, _function: JsValue<EventFunction>): Reference<BrowserObject> {
         val event = Event(
@@ -18,11 +17,13 @@ interface BrowserObject: Keyword {
         jsReturn += event.render()
         return this.refer()
     }
+
     fun on(_eventType: List<JsValue<JsEvent>>, _function: JsValue<EventFunction>): List<Reference<BrowserObject>> {
         return _eventType.map {
             return@map on(it, _function)
         }
     }
+
     fun off(event: JsValue<Event>): Reference<BrowserObject> {
         val eventValue = when (event) {
             is DirectValue<Event> -> event.value
@@ -38,13 +39,18 @@ interface BrowserObject: Keyword {
         }
         return this.refer()
     }
+
     fun off(events: List<JsValue<Event>>): Reference<BrowserObject> {
         events.forEach {
             off(it)
         }
         return this.refer()
     }
-    fun on(_eventType: JsValue<JsEvent>, _function: JavaScript.(List<FunctionVariable<*>>) -> Unit): Reference<BrowserObject> {
+
+    fun on(
+        _eventType: JsValue<JsEvent>,
+        _function: JavaScript.(List<FunctionVariable<*>>) -> Unit
+    ): Reference<BrowserObject> {
         val event = Event(
             eventType = _eventType,
             body = _function
@@ -52,7 +58,11 @@ interface BrowserObject: Keyword {
         jsReturn += event.render()
         return this.refer()
     }
-    fun on(_eventType: List<JsValue<JsEvent>>, _function: JavaScript.(List<FunctionVariable<*>>) -> Unit): List<Reference<BrowserObject>> {
+
+    fun on(
+        _eventType: List<JsValue<JsEvent>>,
+        _function: JavaScript.(List<FunctionVariable<*>>) -> Unit
+    ): List<Reference<BrowserObject>> {
         return _eventType.map {
             return@map on(it, _function)
         }

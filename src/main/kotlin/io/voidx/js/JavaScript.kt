@@ -1,14 +1,13 @@
-package io.void.js
+package io.voidx.js
 
-import io.void.js.keywords.JsValue
-import io.void.js.keywords.Keyword
-import io.void.js.keywords.datastructures.JsDatastructure
-import io.void.js.keywords.emptyJsValue
-import io.void.js.keywords.variable.Variable
+import io.voidx.js.keywords.JsValue
+import io.voidx.js.keywords.Keyword
+import io.voidx.js.keywords.emptyJsValue
+import io.voidx.js.keywords.variable.Variable
 
 sealed class JavaScript(open val runBeforeLoad: Boolean = false) {
 
-    constructor(runBeforeLoad: Boolean = false, code: JavaScript.() -> Unit): this(runBeforeLoad) {
+    constructor(runBeforeLoad: Boolean = false, code: JavaScript.() -> Unit) : this(runBeforeLoad) {
         this.apply(code)
     }
 
@@ -20,7 +19,8 @@ sealed class JavaScript(open val runBeforeLoad: Boolean = false) {
         }
 
         val js = children.mapIndexed { index, keyword ->
-            val rendered = if (keyword.typeOf) keyword.typeOfRender() else if (keyword.await) keyword.awaitRender() else keyword.render()
+            val rendered =
+                if (keyword.typeOf) keyword.typeOfRender() else if (keyword.await) keyword.awaitRender() else keyword.render()
             if (!rendered.endsWith(";")) {
                 // Check if next line starts with a dot or is a function/class declaration
                 val nextLine = getNextLine(index, children)
@@ -30,15 +30,18 @@ sealed class JavaScript(open val runBeforeLoad: Boolean = false) {
         }.joinToString("\n")
         return js
     }
+
     internal fun getNextLine(index: Int, list: MutableList<Keyword>): String? {
         return if (index < children.size - 1) {
             children[index + 1].render()
         } else null
     }
+
     internal fun renderKeyword(rendered: String, nextLine: String?): String {
         return if (nextLine?.startsWith(".") == true ||
             rendered.contains("function") ||
-            (rendered.contains("class")) && !rendered.contains("class=")) {
+            (rendered.contains("class")) && !rendered.contains("class=")
+        ) {
             rendered
         } else {
             "$rendered;"
@@ -46,13 +49,13 @@ sealed class JavaScript(open val runBeforeLoad: Boolean = false) {
     }
 }
 
-class Js(override val runBeforeLoad: Boolean = false, val code: JavaScript.() -> Unit): JavaScript(runBeforeLoad, code)
+class Js(override val runBeforeLoad: Boolean = false, val code: JavaScript.() -> Unit) : JavaScript(runBeforeLoad, code)
 
 open class Function<T>(
     val name: String,
     val arguments: List<String> = emptyList(),
     val body: JavaScript.(List<FunctionVariable<*>>) -> Unit
-): JavaScript(), Keyword {
+) : JavaScript(), Keyword {
 
     override val children = mutableListOf<Keyword>()
     private var async = false
@@ -87,7 +90,7 @@ open class Function<T>(
     }
 }
 
-data class FunctionVariable<T>(override val name: String): Variable<T> {
+data class FunctionVariable<T>(override val name: String) : Variable<T> {
     override val value: T? = null
     override var jsReturn: String = name
     override fun render(): String {
@@ -95,7 +98,11 @@ data class FunctionVariable<T>(override val name: String): Variable<T> {
     }
 }
 
-fun <T> JavaScript.function(name: String, arguments: List<String>, body: JavaScript.(List<FunctionVariable<*>>) -> Unit): Function<T> {
+fun <T> JavaScript.function(
+    name: String,
+    arguments: List<String>,
+    body: JavaScript.(List<FunctionVariable<*>>) -> Unit
+): Function<T> {
     val function = Function<T>(
         name = name,
         arguments = arguments,
@@ -105,7 +112,7 @@ fun <T> JavaScript.function(name: String, arguments: List<String>, body: JavaScr
     return function
 }
 
-data class FunctionRunner<T>(val function: Function<T>, val args: JsValue<*>): Keyword {
+data class FunctionRunner<T>(val function: Function<T>, val args: JsValue<*>) : Keyword {
 
     override var jsReturn: String = "${function.name}(${args.toJs()})"
 

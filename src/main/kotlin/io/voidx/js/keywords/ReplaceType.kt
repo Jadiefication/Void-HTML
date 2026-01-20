@@ -1,4 +1,4 @@
-package io.void.js.keywords
+package io.voidx.js.keywords
 
 enum class ReplaceType {
     CHILDREN,

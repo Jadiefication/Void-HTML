@@ -1,8 +1,8 @@
-package io.void.js.keywords.variable
+package io.voidx.js.keywords.variable
 
-import io.void.js.keywords.Keyword
+import io.voidx.js.keywords.Keyword
 
-interface Variable<T>: Keyword {
+interface Variable<T> : Keyword {
     val name: String
     val value: T?
 }

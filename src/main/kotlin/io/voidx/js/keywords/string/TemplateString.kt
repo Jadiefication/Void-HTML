@@ -1,4 +1,4 @@
-package io.void.js.keywords.string
+package io.voidx.js.keywords.string
 
 class TemplateString {
 
@@ -6,6 +6,7 @@ class TemplateString {
         fun isTemplateString(text: String): Boolean {
             return text.contains("(?<!\\\\)\\\$\\{[^}]".toRegex())
         }
+
         fun turnToTemplateString(text: String): String {
             return "`$text`"
         }

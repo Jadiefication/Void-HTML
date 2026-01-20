@@ -1,7 +1,7 @@
-package io.void.js.keywords.event
+package io.voidx.js.keywords.event
 
-import io.void.js.keywords.DirectValue
-import io.void.js.keywords.JsValue
+import io.voidx.js.keywords.DirectValue
+import io.voidx.js.keywords.JsValue
 
 // Assuming JsEvent and DefaultEvent exist in your project structure
 // interface JsEvent // Placeholder

@@ -1,15 +1,20 @@
-package io.void.js.keywords.event
+package io.voidx.js.keywords.event
 
-import io.void.js.JavaScript
-import io.void.js.keywords.*
-import io.void.js.Function
-import io.void.js.FunctionVariable
-import io.void.js.data.randomString
-import io.void.js.keywords.variable.Variable
+import io.voidx.js.data.randomString
+import io.voidx.js.keywords.variable.Variable
+import io.voidx.js.Function
+import io.voidx.js.FunctionVariable
+import io.voidx.js.JavaScript
+import io.voidx.js.keywords.Call
+import io.voidx.js.keywords.JsValue
+import io.voidx.js.keywords.Keyword
+import io.voidx.js.keywords.RawJs
+import io.voidx.js.keywords.VariableValue
+import io.voidx.js.keywords.asJsValue
 
 data class EventFunction(
     val _body: JavaScript.(List<FunctionVariable<*>>) -> Unit
-): Function<Nothing>(
+) : Function<Nothing>(
     name = "",
     arguments = listOf(String.randomString(4)),
     body = _body,
@@ -42,16 +47,17 @@ data class EventFunction(
         return jsReturn
     }
 }
+
 fun Function<Nothing>.asEventFunction(): JsValue<EventFunction> {
     return EventFunction(this.body).asJsValue()
 }
 
-data class Event(val eventType: JsValue<JsEvent>, val function: JsValue<EventFunction>): Keyword {
+data class Event(val eventType: JsValue<JsEvent>, val function: JsValue<EventFunction>) : Keyword {
     var useCapture = false
     private var isVariable = false
     lateinit var variable: Variable<EventFunction>
 
-    constructor(eventType: JsValue<JsEvent>, body: JavaScript.(List<FunctionVariable<*>>) -> Unit): this(
+    constructor(eventType: JsValue<JsEvent>, body: JavaScript.(List<FunctionVariable<*>>) -> Unit) : this(
         eventType,
         EventFunction(body).asJsValue()
     )
@@ -60,7 +66,8 @@ data class Event(val eventType: JsValue<JsEvent>, val function: JsValue<EventFun
         isVariable = function is VariableValue<EventFunction>
     }
 
-    override var jsReturn: String = ".addEventListener($eventType,${if (!isVariable) function.toJs() else variable.name}${if (useCapture) ", true" else ""})"
+    override var jsReturn: String =
+        ".addEventListener($eventType,${if (!isVariable) function.toJs() else variable.name}${if (useCapture) ", true" else ""})"
 
     override fun render(): String {
         return jsReturn

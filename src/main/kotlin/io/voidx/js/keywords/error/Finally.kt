@@ -1,12 +1,12 @@
-package io.void.js.keywords.error
+package io.voidx.js.keywords.error
 
-import io.void.js.Function
-import io.void.js.FunctionVariable
-import io.void.js.JavaScript
+import io.voidx.js.Function
+import io.voidx.js.FunctionVariable
+import io.voidx.js.JavaScript
 
 data class Finally(
     val _body: JavaScript.(List<FunctionVariable<*>>) -> Unit
-): Function<Nothing>(
+) : Function<Nothing>(
     name = "",
     arguments = emptyList(),
     body = _body

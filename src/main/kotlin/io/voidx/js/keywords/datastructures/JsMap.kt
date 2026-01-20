@@ -1,15 +1,12 @@
-package io.void.js.keywords.datastructures
+package io.voidx.js.keywords.datastructures
 
-import io.void.js.JavaScript
-import io.void.js.Function
-import io.void.js.keywords.JsValue
-import io.void.js.keywords.Keyword
-import io.void.js.keywords.Reference
-import io.void.js.keywords.asJsValue
-import io.void.js.keywords.refer
-import kotlin.collections.emptyMap
+import io.voidx.js.keywords.JsValue
+import io.voidx.js.keywords.Reference
+import io.voidx.js.keywords.asJsValue
+import io.voidx.js.keywords.refer
+import io.voidx.js.JavaScript
 
-data class JsMap<K, V>(val baseMap: Map<K, V>): JsDatastructure {
+data class JsMap<K, V>(val baseMap: Map<K, V>) : JsDatastructure {
 
     override var jsReturn: String = ""
     private var inside = StringBuilder("")
@@ -31,6 +28,7 @@ data class JsMap<K, V>(val baseMap: Map<K, V>): JsDatastructure {
         jsReturn = "new Map([$inside])"
         return this
     }
+
     fun emptyMap(): JsMap<K, V> {
         jsReturn = "new Map()"
         return this
@@ -40,26 +38,32 @@ data class JsMap<K, V>(val baseMap: Map<K, V>): JsDatastructure {
         jsReturn += ".set($key, $value)"
         return this
     }
+
     fun get(key: JsValue<K>, call: (V?) -> Unit): Reference<JsMap<K, V>> {
         jsReturn += ".get($key)"
         return applyNullableMethods(call, null, this)
     }
+
     fun has(key: JsValue<K>): JsValue<Boolean> {
         jsReturn += ".has($key)"
         return true.asJsValue()
     }
+
     fun delete(key: JsValue<K>): JsValue<Boolean> {
         jsReturn += ".delete($key)"
         return true.asJsValue()
     }
+
     fun clear(): Reference<JsMap<K, V>> {
         jsReturn += ".clear()"
         return this.refer()
     }
+
     fun size(): JsValue<Int> {
         jsReturn += ".size"
         return 0.asJsValue()
     }
+
     fun entries(): JsMap<K, V> {
         jsReturn += ".entries()"
         return this
@@ -74,6 +78,7 @@ inline fun <reified K, reified V> JavaScript.map(baseMap: Map<K, V>): JsMap<K, V
     @Suppress("UNCHECKED_CAST")
     return map as JsMap<K, V>
 }
+
 inline fun <reified K, reified V> JavaScript.emptyJsMap(): JsMap<K, V> {
     val map = JsMap(
         baseMap = emptyMap<K, V>(),
@@ -82,6 +87,7 @@ inline fun <reified K, reified V> JavaScript.emptyJsMap(): JsMap<K, V> {
     @Suppress("UNCHECKED_CAST")
     return map as JsMap<K, V>
 }
+
 inline fun <reified K, reified V> Map<K, V>.asJsMap(): JsMap<K, V> {
     val map = JsMap(this)
     return map as JsMap<K, V>
