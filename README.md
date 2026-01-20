@@ -2,6 +2,8 @@
 
 A module add‑on for the Void framework that provides an HTML/CSS/JS DSL for building pages and responses on the JVM.
 
+- Wiki: [DeepWiki](https://deepwiki.com/Void-Framework/Void-HTML)
+
 ---
 
 ### Overview
@@ -22,7 +24,7 @@ This repository is a library (not a standalone application). You add it as a dep
 - Kotlin: 2.2.20
 - Java toolchain: 21
 - Tests: Kotlin test on JUnit Platform
-- Depends on: `com.github.Jadiefication:Void:2.0.0` (via JitPack)
+- Depends on: `com.github.Jadiefication:Void` (via JitPack)
 
 ### Requirements
 
@@ -44,8 +46,6 @@ repositories {
 }
 
 dependencies {
-    // TODO: Verify artifact coordinates. Publication config currently suggests groupId "com.github.Jadiefication"
-    // and an artifactId that needs confirmation.
     implementation("com.github.Jadiefication:Void-HTML:<version>")
 }
 ```
@@ -66,7 +66,6 @@ Maven:
 </repositories>
 
 <dependencies>
-<!-- TODO: Verify artifact coordinates -->
 <dependency>
     <groupId>com.github.Jadiefication</groupId>
     <artifactId>Void-HTML</artifactId>
@@ -74,11 +73,6 @@ Maven:
 </dependency>
 </dependencies>
 ```
-
-Publishing note: The current `build.gradle.kts` uses `publishing` with `groupId = "com.github.Jadiefication"` and
-`artifactId = "Void"` and `version = 1.0`. If this is unintended for this module, adjust before tagging a release on
-GitHub for JitPack. See TODOs below.
-
 ### Quick Start
 
 Build a small HTML fragment and render an HTTP response using the Void framework types:
@@ -140,8 +134,6 @@ val page: Page = /* ... */
 ### Environment Variables
 
 No required environment variables are currently defined.
-
-- TODO: Document any runtime or build-time variables if/when introduced.
 
 ### Tests
 
