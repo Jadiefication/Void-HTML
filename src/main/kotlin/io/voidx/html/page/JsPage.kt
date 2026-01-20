@@ -12,7 +12,7 @@ import java.util.*
  * Internal page that serves a generated JavaScript asset at a unique UUID-backed path.
  * The router loads scripts from resources/js and exposes them via these pages.
  */
-internal class JsPage(
+class JsPage(
     uuid: UUID,
     private val body: String,
 ) : Page(

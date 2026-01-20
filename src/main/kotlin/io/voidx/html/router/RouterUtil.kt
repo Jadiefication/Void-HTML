@@ -28,8 +28,26 @@ import java.util.*
  */
 object RouterUtil : Bootstrap.Module {
 
+    val jsPages = mutableListOf<JsPage>()
+
     override fun onRouterCreated(ctx: Bootstrap.Context) {
         val router = ctx.router
+        listResourcePaths("js").forEach {
+            val content = readResourceText("/$it", this::class.java)
+            val page = JsPage(UUID.randomUUID(), content)
+            jsPages.add(page)
+            router.addRoute(page)
+        }
+        Bootstrap.addPageDecorator { page, router ->
+            page.addCssToRouter(router)
+            if (page::class != CssPage::class) {
+                page.request = buildRequest { Method.GET }
+                if (page.metadata != null) {
+                    if (page.includeTailwind) TailwindGen.processTailwind(page, router)
+                    if (page.includeKts) JsPage.addToMetadata(page, jsPages)
+                }
+            }
+        }
         Bootstrap.registerSpecialRoute { requestDTO, query, clientHandler ->
             val target = requestDTO.target
             val routes = router.routes
