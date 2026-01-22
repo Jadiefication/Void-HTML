@@ -15,6 +15,7 @@ import io.voidx.html.page.metadata
 import io.voidx.page.Page
 import io.voidx.page.route
 import io.voidx.router.Router
+import io.voidx.router.router
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,7 +26,6 @@ class TailwindGenTests {
 
     @Test
     fun tailwind_gen_actually_compiles_css() {
-        val router = Router()
 
         val page = route("/") {
             html({}) {
@@ -41,6 +41,10 @@ class TailwindGenTests {
                 """.trimIndent()
                 ) { }
             }
+        }
+
+        val router = router {
+            route(page)
         }
 
         // Mock Tailwind resource file
@@ -67,13 +71,6 @@ class TailwindGenTests {
         """.trimIndent()
         )
 
-        page.request = buildRequest {
-            method = Method.GET
-            target = "/"
-        }
-
-        TailwindGen.processTailwind(page, router)
-
         val css = router.routes.filter { it.value is CssPage }.values.first().apply {
             request = buildRequest { Method.GET }
         }.content().body.body as String
@@ -95,6 +92,7 @@ class TailwindGenTests {
         assertTrue(css.contains("margin-bottom: 7px"))
 
         assertTrue(css.contains(".-p-\\[1px\\]"))
+        assertTrue(page.metadata?.style != null)
 
         // ❌ unknown utility must NOT compile
         assertTrue(!css.contains("unknown-[10px]"))
