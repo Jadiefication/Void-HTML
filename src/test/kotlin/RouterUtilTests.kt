@@ -12,6 +12,7 @@ import io.voidx.html.router.RouterUtil
 import io.voidx.page.route
 import io.voidx.router.Router
 import org.junit.jupiter.api.Test
+import java.util.ServiceLoader
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -107,5 +108,10 @@ class RouterUtilTests {
         println("[DEBUG_LOG] Response body actual content: $bodyContent")
 
         assertTrue(bodyContent.contains("KTS Response"))
+    }
+
+    @Test
+    fun `RouterUtil being loaded`() {
+        assertTrue(ServiceLoader.load(Module::class.java, Thread.currentThread().contextClassLoader).any { it::class == RouterUtil::class })
     }
 }
