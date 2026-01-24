@@ -5,14 +5,14 @@ import java.net.InetAddress
 import java.nio.charset.Charset
 import java.util.*
 
-private fun escapeHtmlAttr(value: String): String =
+fun escapeHtmlAttr(value: String): String =
     value
         .replace("&", "&amp;")
         .replace("\"", "&quot;")
         .replace("<", "&lt;")
         .replace(">", "&gt;")
 
-private fun escapeHtmlText(value: String): String =
+fun escapeHtmlText(value: String): String =
     value
         .replace("&", "&amp;")
         .replace("<", "&lt;")
@@ -276,21 +276,21 @@ class Metadata internal constructor(
         handleStyles()
 
         return buildString {
-            append("<meta charset=\"$charset\">")
-            append("<title>$title</title>")
+            append("<meta charset=\"${escapeHtmlAttr(charset.toString())}\">")
+            append("<title>${escapeHtmlAttr(title)}</title>")
 
-            append("<meta name=\"description\" content=\"$description\">")
-            append("<meta name=\"keywords\" content=\"${keywords.joinToString()}\">")
-            append("<meta name=\"author\" content=\"${copyright.first}\">")
-            append("<meta name=\"copyright\" content=\"${copyright.second}\">")
-            append("<meta name=\"robots\" content=\"$robotRules\">")
-            append("<meta name=\"theme-color\" content=\"$themeColor\">")
+            append("<meta name=\"description\" content=\"${escapeHtmlAttr(description)}\">")
+            append("<meta name=\"keywords\" content=\"${escapeHtmlAttr(keywords.joinToString())}\">")
+            append("<meta name=\"author\" content=\"${escapeHtmlAttr(copyright.first)}\">")
+            append("<meta name=\"copyright\" content=\"${escapeHtmlAttr(copyright.second)}\">")
+            append("<meta name=\"robots\" content=\"${escapeHtmlAttr(robotRules)}\">")
+            append("<meta name=\"theme-color\" content=\"${escapeHtmlAttr(themeColor)}\">")
 
             favicon?.let {
-                append("<link rel=\"icon\" href=\"${it.first}\" type=\"${it.second}\">")
+                append("<link rel=\"icon\" href=\"${escapeHtmlAttr(it.first)}\" type=\"${escapeHtmlAttr(it.second)}\">")
             }
 
-            append("<link rel=\"canonical\" href=\"$canonical\">")
+            append("<link rel=\"canonical\" href=\"${escapeHtmlAttr(canonical)}\">")
 
             val ogTags =
                 listOf(
@@ -305,17 +305,17 @@ class Metadata internal constructor(
             linkTags.forEach { append(it.render()) }
 
             externalCss?.forEach {
-                append("<link rel=\"stylesheet\" href=\"$it\">")
+                append("<link rel=\"stylesheet\" href=\"${escapeHtmlAttr(it)}\">")
             }
 
             styleBlocks.forEach {
-                append("<style>$it</style>")
+                append("<style>${escapeHtmlAttr(it)}</style>")
             }
 
             scriptTags.forEach { append(it.render()) }
 
             externalJS?.forEach { (src, defer) ->
-                append("<script src=\"$src\" ${if (defer) "defer" else ""}></script>")
+                append("<script src=\"${escapeHtmlAttr(src)}\" ${if (defer) "defer" else ""}></script>")
             }
 
             rawTags.forEach { append(it) }
