@@ -67,7 +67,7 @@ data class ScriptTag(
             src?.let { append("src=\"${escapeHtmlAttr(it)}\" ") }
             attrs.forEach { (k, v) -> append("${escapeHtmlAttr(k)}=\"${escapeHtmlAttr(v)}\" ") }
             append(">")
-            inline?.let { append(escapeHtmlText(it)) }
+            inline?.let { append(it) }
             append("</script>")
         }
 }
@@ -298,7 +298,7 @@ class Metadata internal constructor(
             }
 
             styleBlocks.forEach {
-                append("<style>${escapeHtmlAttr(it)}</style>")
+                append("<style>$it</style>")
             }
 
             scriptTags.forEach { append(it.render()) }
