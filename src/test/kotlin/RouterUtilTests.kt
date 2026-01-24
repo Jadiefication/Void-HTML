@@ -1,8 +1,6 @@
 package test
 
-import io.voidx.Method
 import io.voidx.bootstrap.Bootstrap
-import io.voidx.dto.RequestDTO
 import io.voidx.dto.ResponseDTO
 import io.voidx.dto.buildRequest
 import io.voidx.html.fractal
@@ -11,9 +9,9 @@ import io.voidx.html.page.ktsRoute
 import io.voidx.html.router.RouterUtil
 import io.voidx.page.route
 import io.voidx.router.Router
+import io.voidx.router.router
 import org.junit.jupiter.api.Test
 import java.util.ServiceLoader
-import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -112,7 +110,7 @@ class RouterUtilTests {
 
     @Test
     fun `RouterUtil being loaded`() {
-        val modules = ServiceLoader.load(Module::class.java, Thread.currentThread().contextClassLoader)
+        val modules = ServiceLoader.load(Bootstrap.Module::class.java, Thread.currentThread().contextClassLoader)
         assertTrue(modules.any { it::class == RouterUtil::class })
     }
 }
