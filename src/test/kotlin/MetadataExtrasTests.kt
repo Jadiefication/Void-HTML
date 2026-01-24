@@ -40,6 +40,7 @@ class MetadataExtrasTests {
                 externalCss = mutableListOf("/app.css")
                 externalJS = mutableMapOf("/app.js" to true, "/analytics.js" to false)
                 rawTags.add("<meta name=\"custom\" content=\"val\">")
+                pwa("", "#000000", "")
             }
 
         val rendered = meta.render()
