@@ -5,6 +5,19 @@ import java.net.InetAddress
 import java.nio.charset.Charset
 import java.util.*
 
+private fun escapeHtmlAttr(value: String): String =
+    value
+        .replace("&", "&amp;")
+        .replace("\"", "&quot;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+
+private fun escapeHtmlText(value: String): String =
+    value
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+
 data class MetaTag(
     val name: String? = null,
     val property: String? = null,
@@ -16,15 +29,15 @@ data class MetaTag(
          *
          * Only includes the `name`, `property`, and `http-equiv` attributes when their corresponding values are present; `content` is always included.
          *
-         * @return A `String` containing the rendered `<meta>` element.
+         * `@return` A `String` containing the rendered `<meta>` element.
          */
         fun render(): String =
         buildString {
             append("<meta ")
-            name?.let { append("name=\"$it\" ") }
-            property?.let { append("property=\"$it\" ") }
-            httpEquiv?.let { append("http-equiv=\"$it\" ") }
-            append("content=\"$content\">")
+            name?.let { append("name=\"${escapeHtmlAttr(it)}\" ") }
+            property?.let { append("property=\"${escapeHtmlAttr(it)}\" ") }
+            httpEquiv?.let { append("http-equiv=\"${escapeHtmlAttr(it)}\" ") }
+            append("content=\"${escapeHtmlAttr(content)}\">")
         }
 }
 
@@ -36,11 +49,11 @@ data class LinkTag(
     /**
              * Builds an HTML `<link>` element string using the tag's `rel`, `href`, and any additional attributes.
              *
-             * @return A string containing a complete `<link>` tag with `rel`, `href`, and the provided attributes. 
+             * `@return` A string containing a complete `<link>` tag with `rel`, `href`, and the provided attributes. 
              */
             fun render(): String =
-        "<link rel=\"$rel\" href=\"$href\" " +
-            attrs.entries.joinToString(" ") { "${it.key}=\"${it.value}\"" } +
+        "<link rel=\"${escapeHtmlAttr(rel)}\" href=\"${escapeHtmlAttr(href)}\" " +
+            attrs.entries.joinToString(" ") { "${escapeHtmlAttr(it.key)}=\"${escapeHtmlAttr(it.value)}\"" } +
             ">"
 }
 
@@ -52,17 +65,18 @@ data class ScriptTag(
     /**
          * Produces an HTML <script> element incorporating the optional `src`, any provided attributes, and optional inline script content.
          *
-         * @return The complete script tag as an HTML string.
+         * `@return` The complete script tag as an HTML string.
          */
         fun render(): String =
         buildString {
             append("<script ")
-            src?.let { append("src=\"$it\" ") }
-            attrs.forEach { (k, v) -> append("$k=\"$v\" ") }
+            src?.let { append("src=\"${escapeHtmlAttr(it)}\" ") }
+            attrs.forEach { (k, v) -> append("${escapeHtmlAttr(k)}=\"${escapeHtmlAttr(v)}\" ") }
             append(">")
-            inline?.let { append(it) }
+            inline?.let { append(escapeHtmlText(it)) }
             append("</script>")
         }
+}
 }
 
 /**
