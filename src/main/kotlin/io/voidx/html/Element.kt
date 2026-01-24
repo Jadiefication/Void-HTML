@@ -88,6 +88,15 @@ abstract class Element internal constructor(
         children!!.add(Fractal(text = escapeHtmlText(this)))
     }
 
+    /**
+    * Adds raw, unescaped HTML content as a child of this element.
+    *
+    * **Security Warning**: This bypasses HTML escaping. Only use with trusted content.
+    * Using untrusted user input here creates XSS vulnerabilities.
+    *
+    * `@param` _text The raw HTML string to insert.
+    * `@throws` IllegalStateException if this element cannot have children.
+    */
     fun unsafeHtml(_text: String) {
         children!!.add(Fractal(text = _text))
     }
