@@ -11,7 +11,9 @@ import kotlin.reflect.KClass
 import kotlin.test.*
 
 class ElementInternalTests {
-    private class TestElement(override val name: String) : Element(name) {
+    private class TestElement(
+        override val name: String,
+    ) : Element(name) {
         override fun render(): String {
             var attrs = ""
             attributes.forEach { (n, v) -> attrs += "$n=\"$v\" " }
@@ -116,9 +118,10 @@ class ElementInternalTests {
         val f1 = Fractal("some text")
         assertEquals("some text", f1.render())
 
-        val f2 = Fractal {
-            Div { +"child" }
-        }
+        val f2 =
+            Fractal {
+                Div { +"child" }
+            }
         assertEquals("<div >child</div>", f2.render())
 
         val f3 = Fractal()
@@ -146,9 +149,10 @@ class ElementInternalTests {
 
     @Test
     fun child_not_allowed_exception() {
-        val parent = object : ElementWithChildren("parent") {
-            override val acceptedChildren: MutableList<KClass<out Element>?> = mutableListOf(DivNode::class)
-        }
+        val parent =
+            object : ElementWithChildren("parent") {
+                override val acceptedChildren: MutableList<KClass<out Element>?> = mutableListOf(DivNode::class)
+            }
         val child = TestElement("child")
         parent.children!!.add(child)
         assertFailsWith<ChildNotAllowedException> {
@@ -158,12 +162,14 @@ class ElementInternalTests {
 
     @Test
     fun fragment_child_not_allowed_exception() {
-        val parent = object : ElementWithChildren("parent") {
-            override val acceptedChildren: MutableList<KClass<out Element>?> = mutableListOf(H1Node::class)
-        }
-        val frag = Fractal {
-            children!!.add(DivNode()) // Should throw FragmentChildNotAllowedException because DivNode is not accepted
-        }
+        val parent =
+            object : ElementWithChildren("parent") {
+                override val acceptedChildren: MutableList<KClass<out Element>?> = mutableListOf(H1Node::class)
+            }
+        val frag =
+            Fractal {
+                children!!.add(DivNode()) // Should throw FragmentChildNotAllowedException because DivNode is not accepted
+            }
         parent.children!!.add(frag)
         assertFailsWith<FragmentChildNotAllowedException> {
             parent.render()
@@ -172,12 +178,14 @@ class ElementInternalTests {
 
     @Test
     fun fragment_accepted_recursively() {
-        val parent = object : ElementWithChildren("parent") {
-            override val acceptedChildren: MutableList<KClass<out Element>?> = mutableListOf(DivNode::class)
-        }
-        val frag = Fractal {
-            DivNode()
-        }
+        val parent =
+            object : ElementWithChildren("parent") {
+                override val acceptedChildren: MutableList<KClass<out Element>?> = mutableListOf(DivNode::class)
+            }
+        val frag =
+            Fractal {
+                DivNode()
+            }
         parent.children!!.add(frag)
         // Should NOT throw because DivNode is not added
         parent.render()
@@ -185,9 +193,10 @@ class ElementInternalTests {
 
     @Test
     fun empty_fragment_is_accepted() {
-        val parent = object : ElementWithChildren("parent") {
-            override val acceptedChildren: MutableList<KClass<out Element>?> = mutableListOf(DivNode::class)
-        }
+        val parent =
+            object : ElementWithChildren("parent") {
+                override val acceptedChildren: MutableList<KClass<out Element>?> = mutableListOf(DivNode::class)
+            }
         val frag = Fractal()
         parent.children!!.add(frag)
         parent.render() // Should not throw because empty fragment is accepted
@@ -195,17 +204,18 @@ class ElementInternalTests {
 
     @Test
     fun element_kt_helpers() {
-        val root = fractal {
-            Container("id" to "cid") {
-                Flex("id" to "fid") {
-                    Center("id" to "ceid") {
-                        Section("My Title", "id" to "sid") {
-                            +"Content"
+        val root =
+            fractal {
+                Container("id" to "cid") {
+                    Flex("id" to "fid") {
+                        Center("id" to "ceid") {
+                            Section("My Title", "id" to "sid") {
+                                +"Content"
+                            }
                         }
                     }
                 }
             }
-        }
         val rendered = root.render()
         assertTrue(rendered.contains("id=\"cid\""))
         assertTrue(rendered.contains("id=\"fid\""))
@@ -217,109 +227,110 @@ class ElementInternalTests {
 
     @Test
     fun generated_elements_smoke_test() {
-        val root = fractal {
-            Div {
-                A { +"Link" }
-                Abbr { +"Abbr" }
-                Address { +"Address" }
-                Area()
-                Article { }
-                Aside { }
-                Audio { }
-                B { }
-                Bdi { }
-                Bdo { }
-                Blockquote { }
-                Br()
-                Button { }
-                Caption { }
-                Cite { }
-                Code { }
-                Col()
-                Colgroup { }
-                Data { }
-                Datalist { }
-                Dd { }
-                Del { }
-                Details { }
-                Dfn { }
-                Dialog { }
-                Dl { }
-                Dt { }
-                Em { }
-                Embed()
-                Fieldset { }
-                Figcaption { }
-                Figure { }
-                Footer { }
-                Form { }
-                H1 { }
-                H2 { }
-                H3 { }
-                H4 { }
-                H5 { }
-                H6 { }
-                Header { }
-                Hr()
-                I { }
-                Iframe { }
-                Img()
-                Input()
-                Ins { }
-                Kbd { }
-                Label { }
-                Legend { }
-                Li { }
-                Main { }
-                Map { }
-                Mark { }
-                Menu { }
-                Menuitem()
-                Meter { }
-                Nav { }
-                Object { }
-                Ol { }
-                Optgroup { }
-                Option { }
-                Output { }
-                P { }
-                Param()
-                Picture { }
-                Pre { }
-                Progress { }
-                Q { }
-                Rp { }
-                Rt { }
-                Ruby { }
-                S { }
-                Samp { }
-                Section { }
-                Select { }
-                Small { }
-                Source()
-                Span { }
-                Strong { }
-                Sub { }
-                Summary { }
-                Sup { }
-                Table { }
-                Tbody { }
-                Td { }
-                Template { }
-                Textarea { }
-                Tfoot { }
-                Th { }
-                Thead { }
-                Time { }
-                Tr { }
-                Track()
-                U { }
-                Ul { }
-                Var { }
-                Video { }
-                Wbr()
+        val root =
+            fractal {
+                Div {
+                    A { +"Link" }
+                    Abbr { +"Abbr" }
+                    Address { +"Address" }
+                    Area()
+                    Article { }
+                    Aside { }
+                    Audio { }
+                    B { }
+                    Bdi { }
+                    Bdo { }
+                    Blockquote { }
+                    Br()
+                    Button { }
+                    Caption { }
+                    Cite { }
+                    Code { }
+                    Col()
+                    Colgroup { }
+                    Data { }
+                    Datalist { }
+                    Dd { }
+                    Del { }
+                    Details { }
+                    Dfn { }
+                    Dialog { }
+                    Dl { }
+                    Dt { }
+                    Em { }
+                    Embed()
+                    Fieldset { }
+                    Figcaption { }
+                    Figure { }
+                    Footer { }
+                    Form { }
+                    H1 { }
+                    H2 { }
+                    H3 { }
+                    H4 { }
+                    H5 { }
+                    H6 { }
+                    Header { }
+                    Hr()
+                    I { }
+                    Iframe { }
+                    Img()
+                    Input()
+                    Ins { }
+                    Kbd { }
+                    Label { }
+                    Legend { }
+                    Li { }
+                    Main { }
+                    Map { }
+                    Mark { }
+                    Menu { }
+                    Menuitem()
+                    Meter { }
+                    Nav { }
+                    Object { }
+                    Ol { }
+                    Optgroup { }
+                    Option { }
+                    Output { }
+                    P { }
+                    Param()
+                    Picture { }
+                    Pre { }
+                    Progress { }
+                    Q { }
+                    Rp { }
+                    Rt { }
+                    Ruby { }
+                    S { }
+                    Samp { }
+                    Section { }
+                    Select { }
+                    Small { }
+                    Source()
+                    Span { }
+                    Strong { }
+                    Sub { }
+                    Summary { }
+                    Sup { }
+                    Table { }
+                    Tbody { }
+                    Td { }
+                    Template { }
+                    Textarea { }
+                    Tfoot { }
+                    Th { }
+                    Thead { }
+                    Time { }
+                    Tr { }
+                    Track()
+                    U { }
+                    Ul { }
+                    Var { }
+                    Video { }
+                    Wbr()
+                }
             }
-        }
         val rendered = root.render()
         assertTrue(rendered.contains("<a"))
         assertTrue(rendered.contains("<div"))

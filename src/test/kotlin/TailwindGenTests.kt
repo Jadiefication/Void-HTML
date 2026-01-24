@@ -23,34 +23,40 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class TailwindGenTests {
-
     @Test
     fun tailwind_gen_actually_compiles_css() {
-
-        val page = route("/") {
-            html({}) {
-                Div(
-                    "class" to """
-                    flex items-center
-                    hover:bg-red-500
-                    md:p-4
-                    mb-[7px]
-                    sm:hover:mt-[2rem]
-                    -p-[1px]
-                    unknown-[10px]
-                """.trimIndent()
-                ) { }
+        val page =
+            route("/") {
+                html({}) {
+                    Div(
+                        "class" to
+                            """
+                            flex items-center
+                            hover:bg-red-500
+                            md:p-4
+                            mb-[7px]
+                            sm:hover:mt-[2rem]
+                            -p-[1px]
+                            unknown-[10px]
+                            """.trimIndent(),
+                    ) { }
+                }
             }
-        }
 
-        val router = router {
-            route(page)
-        }
+        val router =
+            router {
+                route(page)
+            }
 
-        val css = router.routes.filter { it.value is CssPage }.values.first().apply {
-            request = buildRequest { Method.GET }
-        }.content().body.body as String
-
+        val css =
+            router.routes
+                .filter { it.value is CssPage }
+                .values
+                .first()
+                .apply {
+                    request = buildRequest { Method.GET }
+                }.content()
+                .body.body as String
 
         // ✅ real assertions
         assertTrue(css.contains(".flex"))
@@ -79,16 +85,16 @@ class TailwindGenTests {
         assertTrue(list.containsKey("a"))
         assertEquals(1, list["a"])
     }
-    
+
     @Test
     fun tailwind_string_delegate_coverage() {
         val page = route("/ts") { }
         val ts = TailwindString("bg-blue-500")
-        
+
         // Use a real property via reflection
         val property = Page::target
         val result = ts.provideDelegate(page, property)
-        
+
         assertEquals("bg-blue-500", result)
         assertTrue(page.classAttributes.contains("bg-blue-500"))
     }

@@ -30,17 +30,18 @@ class MetadataExtrasTests {
     @Test
     fun metadata_render_includes_all_fields() {
         val page = route("/test") { }
-        val meta = metadata(page) {
-            title = "Custom Title"
-            description = "Custom Desc"
-            favicon = "/fav.ico" to "image/x-icon"
-            keywords = listOf("void", "kotlin")
-            themeColor = "#000000"
-            siteVerification = "google123"
-            externalCss = mutableListOf("/app.css")
-            externalJS = mutableMapOf("/app.js" to true, "/analytics.js" to false)
-            rawTags.add("<meta name=\"custom\" content=\"val\">")
-        }
+        val meta =
+            metadata(page) {
+                title = "Custom Title"
+                description = "Custom Desc"
+                favicon = "/fav.ico" to "image/x-icon"
+                keywords = listOf("void", "kotlin")
+                themeColor = "#000000"
+                siteVerification = "google123"
+                externalCss = mutableListOf("/app.css")
+                externalJS = mutableMapOf("/app.js" to true, "/analytics.js" to false)
+                rawTags.add("<meta name=\"custom\" content=\"val\">")
+            }
 
         val rendered = meta.render()
         assertTrue(rendered.contains("<title>Custom Title</title>"))
@@ -60,23 +61,26 @@ class MetadataExtrasTests {
     fun handleStyles_logic() {
         val page = route("/test") { }
         val styleUuid = UUID.randomUUID()
-        
+
         // Case 1: externalCss is null
-        val meta1 = metadata(page) {
-            style = styleUuid
-        }
+        val meta1 =
+            metadata(page) {
+                style = styleUuid
+            }
         val rendered1 = meta1.render()
         assertTrue(rendered1.contains("/css/$styleUuid/styles.css"))
 
         // Case 2: externalCss is not null
-        val meta2 = metadata(page) {
-            externalCss = mutableListOf("/other.css")
-            style = styleUuid
-        }
+        val meta2 =
+            metadata(page) {
+                externalCss = mutableListOf("/other.css")
+                style = styleUuid
+            }
         val rendered2 = meta2.render()
         assertTrue(rendered2.contains("/other.css"))
         assertTrue(rendered2.contains("/css/$styleUuid/styles.css"))
     }
+
     @Test
     fun external_js_defer_false_is_rendered_without_defer_and_order_preserved() {
         val page =
