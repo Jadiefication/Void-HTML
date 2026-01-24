@@ -30,10 +30,11 @@ class HtmlModuleTests {
         assertEquals("/css/$uuid/styles.css", cssPage.target)
 
         // GET
-        cssPage.request = buildRequest {
-            method = Method.GET
-            target = cssPage.target
-        }
+        cssPage.request =
+            buildRequest {
+                method = Method.GET
+                target = cssPage.target
+            }
         val resp = cssPage.content()
         assertEquals(200, resp.status)
         assertEquals("text/css", resp.headers["Content-Type"])
@@ -41,13 +42,15 @@ class HtmlModuleTests {
         assertEquals(bodyText, respBody.body)
 
         // POST
-        cssPage.request = buildRequest {
-            method = Method.POST
-            target = cssPage.target
-        }
+        cssPage.request =
+            buildRequest {
+                method = Method.POST
+                target = cssPage.target
+            }
         val resp405 = cssPage.content()
         assertEquals(405, resp405.status)
     }
+
     @Test
     fun html_response_sets_headers_and_attributes() {
         val el = fractal { Div("id" to "root") { } }
@@ -85,15 +88,17 @@ class HtmlModuleTests {
 
     @Test
     fun page_handler_html_dsl() {
-        val page = route("/") {
-            html({ title = "DSL Title" }) {
-                Div { +"Hello" }
+        val page =
+            route("/") {
+                html({ title = "DSL Title" }) {
+                    Div { +"Hello" }
+                }
             }
-        }
-        page.request = buildRequest {
-            method = Method.GET
-            target = "/"
-        }
+        page.request =
+            buildRequest {
+                method = Method.GET
+                target = "/"
+            }
         val response = page.content()
         assertEquals("DSL Title", page.metadata?.title)
         val body = (response.body as ResponseBody.StringBody).body
@@ -109,10 +114,11 @@ class HtmlModuleTests {
         assertEquals("/js/$uuid/script.js", jsPage.target)
 
         // GET
-        jsPage.request = buildRequest {
-            method = Method.GET
-            target = jsPage.target
-        }
+        jsPage.request =
+            buildRequest {
+                method = Method.GET
+                target = jsPage.target
+            }
         val resp = jsPage.content()
         assertEquals(200, resp.status)
         assertEquals("text/javascript", resp.headers["Content-Type"])
@@ -120,10 +126,11 @@ class HtmlModuleTests {
         assertEquals(bodyText, respBody.body)
 
         // POST
-        jsPage.request = buildRequest {
-            method = Method.POST
-            target = jsPage.target
-        }
+        jsPage.request =
+            buildRequest {
+                method = Method.POST
+                target = jsPage.target
+            }
         val resp405 = jsPage.content()
         assertEquals(405, resp405.status)
 
@@ -131,7 +138,7 @@ class HtmlModuleTests {
         val htmlPage = route("/") { }
         JsPage.addToMetadata(htmlPage, jsPage)
         assertTrue(htmlPage.metadata!!.externalJS!!.containsKey(jsPage.target))
-        
+
         JsPage.addToMetadata(htmlPage, listOf(jsPage)) // list version
     }
 
@@ -140,15 +147,15 @@ class HtmlModuleTests {
         val router = Router()
         val page = route("/") { }
         page.metadata = Metadata(page)
-        
+
         // Use Page.invoke to add css files
         // Note: this depends on resources/css being present.
         // If it's empty, we might not get any hits.
         page("nonexistent.css")
-        
+
         // Manually add to cssFiles to ensure addCssToRouter does something
         page.cssFiles.add("css/test.css") // simulating a found resource
-        
+
         // This will try to read resource "css/test.css"
         // If it doesn't exist, it might fail.
         // Assuming there might be at least one css file in resources for other tests.

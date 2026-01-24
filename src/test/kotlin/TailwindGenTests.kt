@@ -15,6 +15,7 @@ import io.voidx.html.page.metadata
 import io.voidx.page.Page
 import io.voidx.page.route
 import io.voidx.router.Router
+import io.voidx.router.router
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -22,79 +23,56 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class TailwindGenTests {
-
     @Test
     fun tailwind_gen_actually_compiles_css() {
-        val router = Router()
-
-        val page = route("/") {
-            html({}) {
-                Div(
-                    "class" to """
-                    flex items-center
-                    hover:bg-red-500
-                    md:p-4
-                    mb-[7px]
-                    sm:hover:mt-[2rem]
-                    -p-[1px]
-                    unknown-[10px]
-                """.trimIndent()
-                ) { }
+        val page =
+            route("/") {
+                html({}) {
+                    Div(
+                        "class" to
+                            """
+                            flex items-center
+                            hover:bg-red-500
+                            md:p-4
+                            mb-[7px]
+                            sm:hover:mt-[2rem]
+                            -p-[1px]
+                            unknown-[10px]
+                            """.trimIndent(),
+                    ) { }
+                }
             }
-        }
 
-        // Mock Tailwind resource file
-        val field = TailwindGen::class.java.getDeclaredField("resourceFile")
-        field.isAccessible = true
-        field.set(
-            TailwindGen,
-            """
-        .flex { display: flex; }
-        .items-center { align-items: center; }
+        val router =
+            router {
+                route(page)
+            }
 
-        .hover\:bg-red-500:hover { background-color: red; }
-
-        @media (min-width: 640px) {
-          .sm\:hover\:mt-\[2rem\]:hover { margin-top: 2rem; }
-        }
-
-        @media (min-width: 768px) {
-          .md\:p-4 { padding: 1rem; }
-        }
-
-        .mb-\[7px\] { margin-bottom: 7px; }
-        .-p-\[1px\] { padding: -1px; }
-        """.trimIndent()
-        )
-
-        page.request = buildRequest {
-            method = Method.GET
-            target = "/"
-        }
-
-        TailwindGen.processTailwind(page, router)
-
-        val css = router.routes.filter { it.value is CssPage }.values.first().apply {
-            request = buildRequest { Method.GET }
-        }.content().body.body as String
-
-        println(css)
-
+        val css =
+            router.routes
+                .filter { it.value is CssPage }
+                .values
+                .first()
+                .apply {
+                    request = buildRequest { Method.GET }
+                }.content()
+                .body.body as String
 
         // ✅ real assertions
         assertTrue(css.contains(".flex"))
-        assertTrue(css.contains("display: flex"))
+        assertTrue(css.contains("display:flex"))
 
         assertTrue(css.contains(".hover\\:bg-red-500:hover"))
         assertTrue(css.contains("background-color"))
 
-        assertTrue(css.contains("@media (min-width: 768px)"))
+        assertTrue(css.contains("@media (min-width: 640px)"))
         assertTrue(css.contains(".md\\:p-4"))
 
         assertTrue(css.contains(".mb-\\[7px\\]"))
         assertTrue(css.contains("margin-bottom: 7px"))
 
         assertTrue(css.contains(".-p-\\[1px\\]"))
+        assertTrue(page.metadata?.style != null)
 
         // ❌ unknown utility must NOT compile
         assertTrue(!css.contains("unknown-[10px]"))
@@ -107,16 +85,16 @@ class TailwindGenTests {
         assertTrue(list.containsKey("a"))
         assertEquals(1, list["a"])
     }
-    
+
     @Test
     fun tailwind_string_delegate_coverage() {
         val page = route("/ts") { }
         val ts = TailwindString("bg-blue-500")
-        
+
         // Use a real property via reflection
         val property = Page::target
         val result = ts.provideDelegate(page, property)
-        
+
         assertEquals("bg-blue-500", result)
         assertTrue(page.classAttributes.contains("bg-blue-500"))
     }

@@ -65,7 +65,18 @@ object TailwindGen {
         resourceFile = cResponse.body()
     }
 
-    private fun handleElements(element: Element?, page: Page) {
+    /**
+     * Recursively collects CSS class tokens from an element tree and adds them to the page's classAttributes.
+     *
+     * Splits each element's "class" attribute on whitespace, trims tokens, and ignores empty tokens.
+     *
+     * @param element The root Element to process; if `null` nothing is done.
+     * @param page The Page whose `classAttributes` set will be populated with discovered class tokens.
+     */
+    private fun handleElements(
+        element: Element?,
+        page: Page,
+    ) {
         if (element == null) return
 
         val attr = element.attributes["class"]
@@ -79,7 +90,6 @@ object TailwindGen {
             handleElements(child, page)
         }
     }
-
 
     /**
      * Normalize and escape classes to the form they appear in the tailwind CSS.
@@ -102,8 +112,13 @@ object TailwindGen {
     }
 
     /**
-     * Extract selectors that match any of the used class selectors.
-     * This uses two passes: non-media top-level rules, and media blocks.
+     * Collects CSS blocks from the loaded Tailwind stylesheet that are relevant to the given class selectors.
+     *
+     * Includes global rules, @media blocks that contain any of the provided selectors, and top-level non-media rules
+     * whose selectors match or start with any provided selector.
+     *
+     * @param usedClassSelectors Set of normalized CSS class selectors (e.g., ".mt-4") to match against the stylesheet.
+     * @return Concatenated CSS blocks that are used by the provided selectors.
      */
     private fun extractUsedCssBlocks(usedClassSelectors: Set<String>): String {
         val sb = StringBuilder()
@@ -133,9 +148,10 @@ object TailwindGen {
         for (m in ruleRegex.findAll(noMedia)) {
             val selectorBlock = m.groupValues[1].trim()
             val selectors = selectorBlock.split(",").map { it.trim() }
-            val matches = selectors.any { sel ->
-                usedClassSelectors.any { used -> sel == used || sel.startsWith(used) }
-            }
+            val matches =
+                selectors.any { sel ->
+                    usedClassSelectors.any { used -> sel == used || sel.startsWith(used) }
+                }
             if (matches) {
                 val block = m.value
                 if (seen.add(block)) sb.append(block).append("\n")
@@ -144,7 +160,6 @@ object TailwindGen {
 
         return sb.toString()
     }
-
 
     /**
      * Parse a raw class like "sm:hover:mb-[7px]" and, if it is an arbitrary value utility we support,
@@ -344,9 +359,12 @@ object TailwindGen {
 fun <T> List<Pair<T, *>>.containsKey(key: T): Boolean = any { it.first == key }
 
 /**
- * Retrieves the second component for the first pair whose first component equals [key].
+ * Finds the first pair whose first component equals the given key and returns its second component.
+ *
+ * @param key The value to match against each pair's first component.
+ * @return The second component of the matching pair, or `null` if no match is found.
  */
-operator fun <N, M> List<Pair<N, M>>.get(key: N): M? = firstOrNull() { it.first == key }?.second
+operator fun <N, M> List<Pair<N, M>>.get(key: N): M? = firstOrNull { it.first == key }?.second
 
 /**
  * Convenience delegate to register a space-separated list of Tailwind classes
