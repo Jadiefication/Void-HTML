@@ -64,14 +64,19 @@ class Metadata internal constructor(
     var charset: Charset = Charsets.UTF_8
     var copyright: Pair<String, String> = "Void" to "© 2025 Void Page"
 
+    private val hostAddress: String =
+        runCatching { InetAddress.getLocalHost().hostAddress }
+            .getOrElse { "localhost" }
+
     var og: Pair<Triple<String, String, String>, String> =
         Triple(
             title,
             description,
             "https://picsum.photos/seed/example/300/200",
-        ) to "http://${InetAddress.getLocalHost().hostAddress}${page.target}"
+        ) to "http://$hostAddress${page.target}"
 
-    var canonical: String = "http://${InetAddress.getLocalHost().hostAddress}/"
+    var canonical: String = "http://$hostAddress/"
+
     var themeColor: String = "#ffffff"
     var robotRules: String = "noindex nofollow"
 
@@ -184,10 +189,14 @@ class Metadata internal constructor(
 
             append("<link rel=\"canonical\" href=\"$canonical\">")
 
-            metaProperty("og:title", og.first.first)
-            metaProperty("og:description", og.first.second)
-            metaProperty("og:image", og.first.third)
-            metaProperty("og:url", og.second)
+            val ogTags =
+                listOf(
+                    MetaTag(property = "og:title", content = og.first.first),
+                    MetaTag(property = "og:description", content = og.first.second),
+                    MetaTag(property = "og:image", content = og.first.third),
+                    MetaTag(property = "og:url", content = og.second),
+                )
+            ogTags.forEach { append(it.render()) }
 
             metaTags.forEach { append(it.render()) }
             linkTags.forEach { append(it.render()) }
