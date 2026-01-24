@@ -9,43 +9,44 @@ data class MetaTag(
     val name: String? = null,
     val property: String? = null,
     val httpEquiv: String? = null,
-    val content: String
+    val content: String,
 ) {
-    fun render(): String = buildString {
-        append("<meta ")
-        name?.let { append("name=\"$it\" ") }
-        property?.let { append("property=\"$it\" ") }
-        httpEquiv?.let { append("http-equiv=\"$it\" ") }
-        append("content=\"$content\">")
-    }
+    fun render(): String =
+        buildString {
+            append("<meta ")
+            name?.let { append("name=\"$it\" ") }
+            property?.let { append("property=\"$it\" ") }
+            httpEquiv?.let { append("http-equiv=\"$it\" ") }
+            append("content=\"$content\">")
+        }
 }
 
 data class LinkTag(
     val rel: String,
     val href: String,
-    val attrs: Map<String, String> = emptyMap()
+    val attrs: Map<String, String> = emptyMap(),
 ) {
     fun render(): String =
         "<link rel=\"$rel\" href=\"$href\" " +
-                attrs.entries.joinToString(" ") { "${it.key}=\"${it.value}\"" } +
-                ">"
+            attrs.entries.joinToString(" ") { "${it.key}=\"${it.value}\"" } +
+            ">"
 }
 
 data class ScriptTag(
     val src: String? = null,
     val inline: String? = null,
-    val attrs: Map<String, String> = emptyMap()
+    val attrs: Map<String, String> = emptyMap(),
 ) {
-    fun render(): String = buildString {
-        append("<script ")
-        src?.let { append("src=\"$it\" ") }
-        attrs.forEach { (k, v) -> append("$k=\"$v\" ") }
-        append(">")
-        inline?.let { append(it) }
-        append("</script>")
-    }
+    fun render(): String =
+        buildString {
+            append("<script ")
+            src?.let { append("src=\"$it\" ") }
+            attrs.forEach { (k, v) -> append("$k=\"$v\" ") }
+            append(">")
+            inline?.let { append(it) }
+            append("</script>")
+        }
 }
-
 
 /**
  * Describes HTML document metadata for a [Page]: title, description, icons, social tags,
@@ -67,7 +68,7 @@ class Metadata internal constructor(
         Triple(
             title,
             description,
-            "https://picsum.photos/seed/example/300/200"
+            "https://picsum.photos/seed/example/300/200",
         ) to "http://${InetAddress.getLocalHost().hostAddress}${page.target}"
 
     var canonical: String = "http://${InetAddress.getLocalHost().hostAddress}/"
@@ -84,28 +85,41 @@ class Metadata internal constructor(
     val styleBlocks = mutableListOf<String>()
     val rawTags = mutableListOf<String>()
 
-    /* ---------- DSL helpers ---------- */
+    // ---------- DSL helpers ----------
 
-    fun meta(name: String, content: String) {
+    fun meta(
+        name: String,
+        content: String,
+    ) {
         metaTags += MetaTag(name = name, content = content)
     }
 
-    fun metaProperty(property: String, content: String) {
+    fun metaProperty(
+        property: String,
+        content: String,
+    ) {
         metaTags += MetaTag(property = property, content = content)
     }
 
-    fun metaHttpEquiv(httpEquiv: String, content: String) {
+    fun metaHttpEquiv(
+        httpEquiv: String,
+        content: String,
+    ) {
         metaTags += MetaTag(httpEquiv = httpEquiv, content = content)
     }
 
-    fun link(rel: String, href: String, attrs: Map<String, String> = emptyMap()) {
+    fun link(
+        rel: String,
+        href: String,
+        attrs: Map<String, String> = emptyMap(),
+    ) {
         linkTags += LinkTag(rel, href, attrs)
     }
 
     fun script(
         src: String? = null,
         inline: String? = null,
-        attrs: Map<String, String> = emptyMap()
+        attrs: Map<String, String> = emptyMap(),
     ) {
         scriptTags += ScriptTag(src, inline, attrs)
     }
@@ -114,11 +128,11 @@ class Metadata internal constructor(
         styleBlocks += css
     }
 
-    /* ---------- Opinionated helpers ---------- */
+    // ---------- Opinionated helpers ----------
 
     fun viewport(
         width: String = "device-width",
-        initialScale: Double = 1.0
+        initialScale: Double = 1.0,
     ) {
         meta("viewport", "width=$width, initial-scale=$initialScale")
     }
@@ -127,7 +141,7 @@ class Metadata internal constructor(
         card: String = "summary_large_image",
         title: String,
         description: String,
-        image: String
+        image: String,
     ) {
         meta("twitter:card", card)
         meta("twitter:title", title)
@@ -138,7 +152,7 @@ class Metadata internal constructor(
     fun pwa(
         name: String,
         themeColor: String,
-        manifest: String
+        manifest: String,
     ) {
         meta("application-name", name)
         meta("theme-color", themeColor)
@@ -205,7 +219,6 @@ class Metadata internal constructor(
         }
     }
 }
-
 
 /**
  * DSL entry point to create [Metadata] for the given [page] using [builder].

@@ -27,7 +27,6 @@ import java.util.*
  * - Wire up KTS pages with their corresponding request and trigger information.
  */
 class RouterUtil : Bootstrap.Module {
-
     val jsPages = mutableListOf<JsPage>()
 
     /**
