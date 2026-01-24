@@ -273,7 +273,7 @@ class Metadata internal constructor(
 
         return buildString {
             append("<meta charset=\"${escapeHtmlAttr(charset.toString())}\">")
-            append("<title>${escapeHtmlAttr(title)}</title>")
+            append("<title>${escapeHtmlText(title)}</title>")
 
             append("<meta name=\"description\" content=\"${escapeHtmlAttr(description)}\">")
             append("<meta name=\"keywords\" content=\"${escapeHtmlAttr(keywords.joinToString())}\">")
