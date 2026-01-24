@@ -112,6 +112,13 @@ class Metadata internal constructor(
     val linkTags = mutableListOf<LinkTag>()
     val scriptTags = mutableListOf<ScriptTag>()
     val styleBlocks = mutableListOf<String>()
+
+    /**
+     * Adds raw, unescaped HTML metadata.
+     *
+     * **Security Warning**: This bypasses HTML escaping. Only use with trusted content.
+     * Using untrusted user input here creates XSS vulnerabilities.
+     */
     val rawTags = mutableListOf<String>()
 
     /**
