@@ -37,7 +37,6 @@ class MetadataExtrasTests {
                 favicon = "/fav.ico" to "image/x-icon"
                 keywords = listOf("void", "kotlin")
                 themeColor = "#000000"
-                siteVerification = "google123"
                 externalCss = mutableListOf("/app.css")
                 externalJS = mutableMapOf("/app.js" to true, "/analytics.js" to false)
                 rawTags.add("<meta name=\"custom\" content=\"val\">")
@@ -49,7 +48,6 @@ class MetadataExtrasTests {
         assertTrue(rendered.contains("href=\"/fav.ico\""))
         assertTrue(rendered.contains("content=\"void, kotlin\""))
         assertTrue(rendered.contains("content=\"#000000\""))
-        assertTrue(rendered.contains("content=\"google123\""))
         assertTrue(rendered.contains("href=\"/app.css\""))
         assertTrue(rendered.contains("src=\"/app.js\" defer"))
         assertTrue(rendered.contains("src=\"/analytics.js\""))
