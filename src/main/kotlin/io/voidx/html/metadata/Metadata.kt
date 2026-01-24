@@ -1,22 +1,11 @@
 package io.voidx.html.metadata
 
+import io.voidx.html.util.escapeHtmlAttr
+import io.voidx.html.util.escapeHtmlText
 import io.voidx.page.Page
 import java.net.InetAddress
 import java.nio.charset.Charset
 import java.util.*
-
-fun escapeHtmlAttr(value: String): String =
-    value
-        .replace("&", "&amp;")
-        .replace("\"", "&quot;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-
-fun escapeHtmlText(value: String): String =
-    value
-        .replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
 
 data class MetaTag(
     val name: String? = null,

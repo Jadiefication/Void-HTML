@@ -4,7 +4,7 @@ import io.voidx.Method
 import io.voidx.dto.RequestDTO
 import io.voidx.html.generated.Div
 import io.voidx.html.generated.H2
-import io.voidx.html.metadata.escapeHtmlText
+import io.voidx.html.util.escapeHtmlText
 import java.util.Locale.getDefault
 
 /**
