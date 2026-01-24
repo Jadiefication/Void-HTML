@@ -65,8 +65,10 @@ data class ScriptTag(
         buildString {
             append("<script")
             src?.let { append(" src=\"${escapeHtmlAttr(it)}\"") }
-            if (attrs.isNotEmpty()) append(" ")
-            attrs.forEach { (k, v) -> append("${escapeHtmlAttr(k)}=\"${escapeHtmlAttr(v)}\" ") }
+            if (attrs.isNotEmpty()) {
+                append(" ")
+                append(attrs.entries.joinToString(" ") { "${escapeHtmlAttr(it.key)}=\"${escapeHtmlAttr(it.value)}\"" })
+            }
             append(">")
             inline?.let { append(it) }
             append("</script>")
