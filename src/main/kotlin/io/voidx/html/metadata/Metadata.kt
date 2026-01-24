@@ -11,7 +11,14 @@ data class MetaTag(
     val httpEquiv: String? = null,
     val content: String,
 ) {
-    fun render(): String =
+    /**
+         * Render this MetaTag as an HTML `<meta>` element.
+         *
+         * Only includes the `name`, `property`, and `http-equiv` attributes when their corresponding values are present; `content` is always included.
+         *
+         * @return A `String` containing the rendered `<meta>` element.
+         */
+        fun render(): String =
         buildString {
             append("<meta ")
             name?.let { append("name=\"$it\" ") }
@@ -26,7 +33,12 @@ data class LinkTag(
     val href: String,
     val attrs: Map<String, String> = emptyMap(),
 ) {
-    fun render(): String =
+    /**
+             * Builds an HTML `<link>` element string using the tag's `rel`, `href`, and any additional attributes.
+             *
+             * @return A string containing a complete `<link>` tag with `rel`, `href`, and the provided attributes. 
+             */
+            fun render(): String =
         "<link rel=\"$rel\" href=\"$href\" " +
             attrs.entries.joinToString(" ") { "${it.key}=\"${it.value}\"" } +
             ">"
@@ -37,7 +49,12 @@ data class ScriptTag(
     val inline: String? = null,
     val attrs: Map<String, String> = emptyMap(),
 ) {
-    fun render(): String =
+    /**
+         * Produces an HTML <script> element incorporating the optional `src`, any provided attributes, and optional inline script content.
+         *
+         * @return The complete script tag as an HTML string.
+         */
+        fun render(): String =
         buildString {
             append("<script ")
             src?.let { append("src=\"$it\" ") }
@@ -85,7 +102,12 @@ class Metadata internal constructor(
     val styleBlocks = mutableListOf<String>()
     val rawTags = mutableListOf<String>()
 
-    // ---------- DSL helpers ----------
+    /**
+     * Adds a meta tag with a `name` attribute and `content` to the metadata collection.
+     *
+     * @param name The value for the meta tag's `name` attribute (e.g., "description", "viewport").
+     * @param content The value for the meta tag's `content` attribute.
+     */
 
     fun meta(
         name: String,
@@ -94,6 +116,12 @@ class Metadata internal constructor(
         metaTags += MetaTag(name = name, content = content)
     }
 
+    /**
+     * Adds a meta tag with the given `property` attribute and `content` to the metadata collection.
+     *
+     * @param property The value for the meta tag's `property` attribute (e.g., "og:title").
+     * @param content The value for the meta tag's `content` attribute.
+     */
     fun metaProperty(
         property: String,
         content: String,
@@ -101,6 +129,12 @@ class Metadata internal constructor(
         metaTags += MetaTag(property = property, content = content)
     }
 
+    /**
+     * Adds an HTTP-equiv meta tag to the metadata collection.
+     *
+     * @param httpEquiv The HTTP-EQUIV attribute name (e.g., "Content-Security-Policy", "refresh").
+     * @param content The value for the HTTP-EQUIV attribute.
+     */
     fun metaHttpEquiv(
         httpEquiv: String,
         content: String,
@@ -108,6 +142,13 @@ class Metadata internal constructor(
         metaTags += MetaTag(httpEquiv = httpEquiv, content = content)
     }
 
+    /**
+     * Adds a link tag to the metadata collection.
+     *
+     * @param rel The link relationship (e.g., "stylesheet", "icon").
+     * @param href The URL for the link.
+     * @param attrs Additional attributes to include on the link tag (attribute name to value).
+     */
     fun link(
         rel: String,
         href: String,
@@ -116,6 +157,13 @@ class Metadata internal constructor(
         linkTags += LinkTag(rel, href, attrs)
     }
 
+    /**
+     * Adds a script tag to the metadata with either an external `src` or inline JavaScript.
+     *
+     * @param src URL of an external script to include; omit to use `inline` instead.
+     * @param inline Inline JavaScript content to embed inside the script tag; omit to use `src` instead.
+     * @param attrs Additional attributes to include on the script tag (for example `"defer"` or `"async"`).
+     */
     fun script(
         src: String? = null,
         inline: String? = null,
@@ -124,11 +172,21 @@ class Metadata internal constructor(
         scriptTags += ScriptTag(src, inline, attrs)
     }
 
+    /**
+     * Adds a CSS block to the metadata's collection of inline style blocks.
+     *
+     * @param css The CSS text to add as an inline style block.
+     */
     fun style(css: String) {
         styleBlocks += css
     }
 
-    // ---------- Opinionated helpers ----------
+    /**
+     * Adds a viewport meta tag configured for responsive layouts.
+     *
+     * @param width The viewport width value (e.g., "device-width"). Defaults to "device-width".
+     * @param initialScale The initial zoom scale for the viewport. Defaults to 1.0.
+     */
 
     fun viewport(
         width: String = "device-width",
@@ -137,6 +195,14 @@ class Metadata internal constructor(
         meta("viewport", "width=$width, initial-scale=$initialScale")
     }
 
+    /**
+     * Adds Twitter Card meta tags to the metadata for social preview optimization.
+     *
+     * @param card The Twitter card type (e.g., "summary_large_image", "summary", "app", "player").
+     * @param title The title to display in the Twitter card.
+     * @param description The description to display in the Twitter card.
+     * @param image The absolute URL of the image to display in the Twitter card. 
+     */
     fun twitterCard(
         card: String = "summary_large_image",
         title: String,
@@ -149,6 +215,13 @@ class Metadata internal constructor(
         meta("twitter:image", image)
     }
 
+    /**
+     * Registers Progressive Web App metadata and a manifest link in the metadata DSL.
+     *
+     * @param name The application name exposed to the browser and device UI.
+     * @param themeColor The theme color (e.g., "#ffffff") used by browsers and system UI.
+     * @param manifest The URL or path to the web app manifest file.
+     */
     fun pwa(
         name: String,
         themeColor: String,
@@ -160,10 +233,22 @@ class Metadata internal constructor(
         link("manifest", manifest)
     }
 
+    /**
+     * Adds a Content-Security-Policy `http-equiv` meta tag using the provided policy value.
+     *
+     * @param policy The Content Security Policy string to place in the meta tag (for example: "default-src 'self'; img-src https:;").
+     */
     fun contentSecurityPolicy(policy: String) {
         metaHttpEquiv("Content-Security-Policy", policy)
     }
 
+    /**
+     * Renders the accumulated metadata into an HTML head fragment.
+     *
+     * Ensures any configured style resource is wired into external CSS before generating tags and then concatenates charset, title, standard meta tags, favicon/canonical/link/script tags, inline styles, external asset links, and any raw tags into a single string.
+     *
+     * @return A string containing the HTML elements for the document head metadata.
+     */
     internal fun render(): String {
         handleStyles()
 
@@ -210,6 +295,12 @@ class Metadata internal constructor(
         }
     }
 
+    /**
+     * Ensures the configured style UUID is wired into the externalCss list.
+     *
+     * If `style` is null this is a no-op. Otherwise it adds `/css/{styleId}/styles.css`
+     * to `externalCss`, initializing the list if necessary.
+     */
     private fun handleStyles() {
         val styleId = style ?: return
         if (externalCss == null) {
