@@ -5,6 +5,48 @@ import java.net.InetAddress
 import java.nio.charset.Charset
 import java.util.*
 
+data class MetaTag(
+    val name: String? = null,
+    val property: String? = null,
+    val httpEquiv: String? = null,
+    val content: String
+) {
+    fun render(): String = buildString {
+        append("<meta ")
+        name?.let { append("name=\"$it\" ") }
+        property?.let { append("property=\"$it\" ") }
+        httpEquiv?.let { append("http-equiv=\"$it\" ") }
+        append("content=\"$content\">")
+    }
+}
+
+data class LinkTag(
+    val rel: String,
+    val href: String,
+    val attrs: Map<String, String> = emptyMap()
+) {
+    fun render(): String =
+        "<link rel=\"$rel\" href=\"$href\" " +
+                attrs.entries.joinToString(" ") { "${it.key}=\"${it.value}\"" } +
+                ">"
+}
+
+data class ScriptTag(
+    val src: String? = null,
+    val inline: String? = null,
+    val attrs: Map<String, String> = emptyMap()
+) {
+    fun render(): String = buildString {
+        append("<script ")
+        src?.let { append("src=\"$it\" ") }
+        attrs.forEach { (k, v) -> append("$k=\"$v\" ") }
+        append(">")
+        inline?.let { append(it) }
+        append("</script>")
+    }
+}
+
+
 /**
  * Describes HTML document metadata for a [Page]: title, description, icons, social tags,
  * canonical URL, theme color, robots, external CSS/JS, and arbitrary raw tags.
