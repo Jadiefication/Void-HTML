@@ -174,7 +174,7 @@ class MetadataExtrasTests {
         meta.script(inline = "console.log('hi')")
 
         val head = meta.render()
-        assertTrue(head.contains("<script >console.log('hi')</script>"))
+        assertTrue(head.contains("<script>console.log('hi')</script>"))
     }
 
     @Test

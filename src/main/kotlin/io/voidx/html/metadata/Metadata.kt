@@ -63,8 +63,9 @@ data class ScriptTag(
      */
     fun render(): String =
         buildString {
-            append("<script ")
-            src?.let { append("src=\"${escapeHtmlAttr(it)}\" ") }
+            append("<script")
+            src?.let { append(" src=\"${escapeHtmlAttr(it)}\"") }
+            if (attrs.isNotEmpty()) append(" ")
             attrs.forEach { (k, v) -> append("${escapeHtmlAttr(k)}=\"${escapeHtmlAttr(v)}\" ") }
             append(">")
             inline?.let { append(it) }
