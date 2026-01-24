@@ -59,13 +59,17 @@ class Metadata internal constructor(
     var title: String = "Void Page"
     var description: String = "This is the default description of a Void page"
     var favicon: Pair<String, String>? = null
-    var keywords: List<String> = listOf()
+    var keywords: List<String> = emptyList()
     var charset: Charset = Charsets.UTF_8
     var copyright: Pair<String, String> = "Void" to "© 2025 Void Page"
+
     var og: Pair<Triple<String, String, String>, String> =
-        Triple(title, description, "https://picsum.photos/seed/example/300/200") to
-            "http://${InetAddress.getLocalHost().hostAddress}${page.target}"
-    var siteVerification: String? = null
+        Triple(
+            title,
+            description,
+            "https://picsum.photos/seed/example/300/200"
+        ) to "http://${InetAddress.getLocalHost().hostAddress}${page.target}"
+
     var canonical: String = "http://${InetAddress.getLocalHost().hostAddress}/"
     var themeColor: String = "#ffffff"
     var robotRules: String = "noindex nofollow"
@@ -73,63 +77,124 @@ class Metadata internal constructor(
     var externalCss: MutableList<String>? = null
     var externalJS: MutableMap<String, Boolean>? = null
     internal var style: UUID? = null
+
+    val metaTags = mutableListOf<MetaTag>()
+    val linkTags = mutableListOf<LinkTag>()
+    val scriptTags = mutableListOf<ScriptTag>()
+    val styleBlocks = mutableListOf<String>()
     val rawTags = mutableListOf<String>()
 
-    /** Renders this metadata into a string of <head> tags ready to be embedded in an HTML document. */
-    internal fun render(): String {
-        handleStyles()
-        return "<title>$title</title>" +
-            meta("description", description) +
-            if (favicon != null) {
-                "<link rel=\"icon\" href=\"${favicon!!.first}\" type=\"${favicon!!.second}\">"
-            } else {
-                ""
-            } +
-            meta("keywords", keywords.joinToString()) +
-            "<meta charset=\"$charset\">" +
-            meta("author", copyright.first) +
-            meta("copyright", copyright.second) +
-            metaOG("title", og.first.first) +
-            metaOG("description", og.first.second) +
-            metaOG("image", og.first.third) +
-            metaOG("url", og.second) +
-            if (siteVerification != null) {
-                meta("google-site-verification", siteVerification!!)
-            } else {
-                ""
-            } +
-            "<link rel=\"canonical\" href=\"$canonical\">" +
-            meta("theme-color", themeColor) +
-            meta("robots", robotRules) +
-            if (externalCss != null) {
-                var css = ""
-                externalCss!!.forEach { link ->
-                    css += "<link rel=\"stylesheet\" href=\"$link\">\n"
-                }
-                css
-            } else {
-                ""
-            } +
-            if (externalJS != null) {
-                var js = ""
-                externalJS!!.forEach { (link, deferer) ->
-                    js += "<script src=\"$link\" ${if (deferer) "defer" else ""}></script>\n"
-                }
-                js
-            } else {
-                ""
-            } + rawTags.joinToString("\n")
+    /* ---------- DSL helpers ---------- */
+
+    fun meta(name: String, content: String) {
+        metaTags += MetaTag(name = name, content = content)
     }
 
-    private fun meta(
-        name: String,
-        content: String,
-    ): String = "<meta name=\"$name\" content=\"$content\">"
+    fun metaProperty(property: String, content: String) {
+        metaTags += MetaTag(property = property, content = content)
+    }
 
-    private fun metaOG(
+    fun metaHttpEquiv(httpEquiv: String, content: String) {
+        metaTags += MetaTag(httpEquiv = httpEquiv, content = content)
+    }
+
+    fun link(rel: String, href: String, attrs: Map<String, String> = emptyMap()) {
+        linkTags += LinkTag(rel, href, attrs)
+    }
+
+    fun script(
+        src: String? = null,
+        inline: String? = null,
+        attrs: Map<String, String> = emptyMap()
+    ) {
+        scriptTags += ScriptTag(src, inline, attrs)
+    }
+
+    fun style(css: String) {
+        styleBlocks += css
+    }
+
+    /* ---------- Opinionated helpers ---------- */
+
+    fun viewport(
+        width: String = "device-width",
+        initialScale: Double = 1.0
+    ) {
+        meta("viewport", "width=$width, initial-scale=$initialScale")
+    }
+
+    fun twitterCard(
+        card: String = "summary_large_image",
+        title: String,
+        description: String,
+        image: String
+    ) {
+        meta("twitter:card", card)
+        meta("twitter:title", title)
+        meta("twitter:description", description)
+        meta("twitter:image", image)
+    }
+
+    fun pwa(
         name: String,
-        content: String,
-    ): String = "<meta property=\"og:$name\" content=\"$content\">"
+        themeColor: String,
+        manifest: String
+    ) {
+        meta("application-name", name)
+        meta("theme-color", themeColor)
+        meta("apple-mobile-web-app-capable", "yes")
+        link("manifest", manifest)
+    }
+
+    fun contentSecurityPolicy(policy: String) {
+        metaHttpEquiv("Content-Security-Policy", policy)
+    }
+
+    internal fun render(): String {
+        handleStyles()
+
+        return buildString {
+            append("<meta charset=\"$charset\">")
+            append("<title>$title</title>")
+
+            append("<meta name=\"description\" content=\"$description\">")
+            append("<meta name=\"keywords\" content=\"${keywords.joinToString()}\">")
+            append("<meta name=\"author\" content=\"${copyright.first}\">")
+            append("<meta name=\"copyright\" content=\"${copyright.second}\">")
+            append("<meta name=\"robots\" content=\"$robotRules\">")
+            append("<meta name=\"theme-color\" content=\"$themeColor\">")
+
+            favicon?.let {
+                append("<link rel=\"icon\" href=\"${it.first}\" type=\"${it.second}\">")
+            }
+
+            append("<link rel=\"canonical\" href=\"$canonical\">")
+
+            metaProperty("og:title", og.first.first)
+            metaProperty("og:description", og.first.second)
+            metaProperty("og:image", og.first.third)
+            metaProperty("og:url", og.second)
+
+            metaTags.forEach { append(it.render()) }
+            linkTags.forEach { append(it.render()) }
+
+            externalCss?.forEach {
+                append("<link rel=\"stylesheet\" href=\"$it\">")
+            }
+
+            styleBlocks.forEach {
+                append("<style>$it</style>")
+            }
+
+            scriptTags.forEach { append(it.render()) }
+
+            externalJS?.forEach { (src, defer) ->
+                append("<script src=\"$src\" ${if (defer) "defer" else ""}></script>")
+            }
+
+            rawTags.forEach { append(it) }
+        }
+    }
 
     private fun handleStyles() {
         val styleId = style ?: return
@@ -140,6 +205,7 @@ class Metadata internal constructor(
         }
     }
 }
+
 
 /**
  * DSL entry point to create [Metadata] for the given [page] using [builder].
