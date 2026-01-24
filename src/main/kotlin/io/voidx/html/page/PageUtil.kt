@@ -16,10 +16,6 @@ import io.voidx.router.listResourcePaths
 import io.voidx.util.readResourceText
 import java.util.*
 
-// Force RouterUtil object initialization so its ModuleInit.init() runs and hooks are registered.
-@Suppress("unused")
-private val ensureRouterUtilInit = RouterUtil
-
 /**
  * Optional HTML metadata associated with this page.
  *

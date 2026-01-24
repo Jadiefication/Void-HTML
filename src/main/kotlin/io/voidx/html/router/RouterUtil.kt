@@ -26,7 +26,11 @@ import java.util.*
  * - Register a special route handler to process KTS requests.
  * - Wire up KTS pages with their corresponding request and trigger information.
  */
-object RouterUtil : Bootstrap.Module {
+class RouterUtil : Bootstrap.Module {
+
+    companion object {
+        val INSTANCE = RouterUtil()
+    }
 
     val jsPages = mutableListOf<JsPage>()
 
@@ -40,7 +44,7 @@ object RouterUtil : Bootstrap.Module {
         }
         Bootstrap.addPageDecorator { page, router ->
             page.addCssToRouter(router)
-            if (page::class != CssPage::class) {
+            if (page !is CssPage) {
                 page.request = buildRequest { Method.GET }
                 if (page.metadata != null) {
                     if (page.includeTailwind) TailwindGen.processTailwind(page, router)

@@ -49,7 +49,7 @@ class RouterUtilTests {
         contextConstructor.isAccessible = true
         val context = contextConstructor.newInstance(router) as Bootstrap.Context
         
-        RouterUtil.onRouterCreated(context)
+        RouterUtil.INSTANCE.onRouterCreated(context)
 
         // 4. Access registered special route handlers via reflection
         val bootstrapClass = Bootstrap::class.java
@@ -112,6 +112,7 @@ class RouterUtilTests {
 
     @Test
     fun `RouterUtil being loaded`() {
-        assertTrue(ServiceLoader.load(Module::class.java, Thread.currentThread().contextClassLoader).any { it::class == RouterUtil::class })
+        val modules = ServiceLoader.load(Module::class.java, Thread.currentThread().contextClassLoader)
+        assertTrue(modules.any { it::class == RouterUtil::class })
     }
 }
