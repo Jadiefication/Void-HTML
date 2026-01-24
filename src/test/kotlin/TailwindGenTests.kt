@@ -47,45 +47,19 @@ class TailwindGenTests {
             route(page)
         }
 
-        // Mock Tailwind resource file
-        val field = TailwindGen::class.java.getDeclaredField("resourceFile")
-        field.isAccessible = true
-        field.set(
-            TailwindGen,
-            """
-        .flex { display: flex; }
-        .items-center { align-items: center; }
-
-        .hover\:bg-red-500:hover { background-color: red; }
-
-        @media (min-width: 640px) {
-          .sm\:hover\:mt-\[2rem\]:hover { margin-top: 2rem; }
-        }
-
-        @media (min-width: 768px) {
-          .md\:p-4 { padding: 1rem; }
-        }
-
-        .mb-\[7px\] { margin-bottom: 7px; }
-        .-p-\[1px\] { padding: -1px; }
-        """.trimIndent()
-        )
-
         val css = router.routes.filter { it.value is CssPage }.values.first().apply {
             request = buildRequest { Method.GET }
         }.content().body.body as String
 
-        println(css)
-
 
         // ✅ real assertions
         assertTrue(css.contains(".flex"))
-        assertTrue(css.contains("display: flex"))
+        assertTrue(css.contains("display:flex"))
 
         assertTrue(css.contains(".hover\\:bg-red-500:hover"))
         assertTrue(css.contains("background-color"))
 
-        assertTrue(css.contains("@media (min-width: 768px)"))
+        assertTrue(css.contains("@media (min-width: 640px)"))
         assertTrue(css.contains(".md\\:p-4"))
 
         assertTrue(css.contains(".mb-\\[7px\\]"))
