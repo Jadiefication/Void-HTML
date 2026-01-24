@@ -25,13 +25,13 @@ data class MetaTag(
     val content: String,
 ) {
     /**
-         * Render this MetaTag as an HTML `<meta>` element.
-         *
-         * Only includes the `name`, `property`, and `http-equiv` attributes when their corresponding values are present; `content` is always included.
-         *
-         * `@return` A `String` containing the rendered `<meta>` element.
-         */
-        fun render(): String =
+     * Render this MetaTag as an HTML `<meta>` element.
+     *
+     * Only includes the `name`, `property`, and `http-equiv` attributes when their corresponding values are present; `content` is always included.
+     *
+     * `@return` A `String` containing the rendered `<meta>` element.
+     */
+    fun render(): String =
         buildString {
             append("<meta ")
             name?.let { append("name=\"${escapeHtmlAttr(it)}\" ") }
@@ -47,14 +47,19 @@ data class LinkTag(
     val attrs: Map<String, String> = emptyMap(),
 ) {
     /**
-             * Builds an HTML `<link>` element string using the tag's `rel`, `href`, and any additional attributes.
-             *
-             * `@return` A string containing a complete `<link>` tag with `rel`, `href`, and the provided attributes. 
-             */
-            fun render(): String =
-        "<link rel=\"${escapeHtmlAttr(rel)}\" href=\"${escapeHtmlAttr(href)}\" " +
-            attrs.entries.joinToString(" ") { "${escapeHtmlAttr(it.key)}=\"${escapeHtmlAttr(it.value)}\"" } +
-            ">"
+     * Builds an HTML `<link>` element string using the tag's `rel`, `href`, and any additional attributes.
+     *
+     * `@return` A string containing a complete `<link>` tag with `rel`, `href`, and the provided attributes.
+     */
+    fun render(): String =
+        buildString {
+            append("<link rel=\"${escapeHtmlAttr(rel)}\" href=\"${escapeHtmlAttr(href)}\"")
+            if (attrs.isNotEmpty()) {
+                append(" ")
+                append(attrs.entries.joinToString(" ") { "${escapeHtmlAttr(it.key)}=\"${escapeHtmlAttr(it.value)}\"" })
+            }
+            append(">")
+        }
 }
 
 data class ScriptTag(
@@ -63,11 +68,11 @@ data class ScriptTag(
     val attrs: Map<String, String> = emptyMap(),
 ) {
     /**
-         * Produces an HTML <script> element incorporating the optional `src`, any provided attributes, and optional inline script content.
-         *
-         * `@return` The complete script tag as an HTML string.
-         */
-        fun render(): String =
+     * Produces an HTML <script> element incorporating the optional `src`, any provided attributes, and optional inline script content.
+     *
+     * `@return` The complete script tag as an HTML string.
+     */
+    fun render(): String =
         buildString {
             append("<script ")
             src?.let { append("src=\"${escapeHtmlAttr(it)}\" ") }
@@ -76,7 +81,6 @@ data class ScriptTag(
             inline?.let { append(escapeHtmlText(it)) }
             append("</script>")
         }
-}
 }
 
 /**
@@ -220,7 +224,7 @@ class Metadata internal constructor(
      * @param card The Twitter card type (e.g., "summary_large_image", "summary", "app", "player").
      * @param title The title to display in the Twitter card.
      * @param description The description to display in the Twitter card.
-     * @param image The absolute URL of the image to display in the Twitter card. 
+     * @param image The absolute URL of the image to display in the Twitter card.
      */
     fun twitterCard(
         card: String = "summary_large_image",
