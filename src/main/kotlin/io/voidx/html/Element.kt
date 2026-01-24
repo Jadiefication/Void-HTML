@@ -94,8 +94,8 @@ abstract class Element internal constructor(
     * **Security Warning**: This bypasses HTML escaping. Only use with trusted content.
     * Using untrusted user input here creates XSS vulnerabilities.
     *
-    * `@param` _text The raw HTML string to insert.
-    * `@throws` IllegalStateException if this element cannot have children.
+    * @param _text The raw HTML string to insert.
+    * @throws NullPointerException if this element cannot have children.
     */
     fun unsafeHtml(_text: String) {
         children!!.add(Fractal(text = _text))
