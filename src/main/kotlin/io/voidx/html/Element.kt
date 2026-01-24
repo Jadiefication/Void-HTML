@@ -4,6 +4,7 @@ import io.voidx.Method
 import io.voidx.dto.RequestDTO
 import io.voidx.html.generated.Div
 import io.voidx.html.generated.H2
+import io.voidx.html.util.escapeHtmlText
 import java.util.Locale.getDefault
 
 /**
@@ -84,7 +85,20 @@ abstract class Element internal constructor(
      * Example: +"Hello" will append a [Fractal] text node as a child.
      */
     operator fun String.unaryPlus() {
-        children!!.add(Fractal(text = this))
+        children!!.add(Fractal(text = escapeHtmlText(this)))
+    }
+
+    /**
+    * Adds raw, unescaped HTML content as a child of this element.
+    *
+    * **Security Warning**: This bypasses HTML escaping. Only use with trusted content.
+    * Using untrusted user input here creates XSS vulnerabilities.
+    *
+    * @param _text The raw HTML string to insert.
+    * @throws NullPointerException if this element cannot have children.
+    */
+    fun unsafeHtml(_text: String) {
+        children!!.add(Fractal(text = _text))
     }
 }
 

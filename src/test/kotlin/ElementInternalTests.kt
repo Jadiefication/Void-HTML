@@ -350,4 +350,49 @@ class ElementInternalTests {
         val ex3 = NoOutputException()
         assertEquals("No output directory was specified.", ex3.message)
     }
+
+    @Test
+    fun unary_plus_escapes_html_text_content() {
+        val el =
+            fractal {
+                Div {
+                    +"<b>bold & dangerous</b>"
+                }
+            }
+
+        val rendered = el.render()
+
+        // text must be escaped
+        assertTrue(rendered.contains("&lt;b&gt;bold &amp; dangerous&lt;/b&gt;"))
+        assertFalse(rendered.contains("<b>bold"))
+    }
+
+    @Test
+    fun unsafe_html_inserts_raw_html_without_escaping() {
+        val el =
+            fractal {
+                Div {
+                    unsafeHtml("<span id=\"raw\">RAW</span>")
+                }
+            }
+
+        val rendered = el.render()
+
+        // raw HTML must be preserved
+        assertTrue(rendered.contains("<span id=\"raw\">RAW</span>"))
+    }
+
+    @Test
+    fun unsafe_html_throws_when_children_are_not_allowed() {
+        val el =
+            object : Element("no-children") {
+                override fun render(): String = "<no-children />"
+                override val children: MutableList<Element>? = null
+            }
+
+        assertFailsWith<NullPointerException> {
+            el.unsafeHtml("<b>boom</b>")
+        }
+    }
+
 }
