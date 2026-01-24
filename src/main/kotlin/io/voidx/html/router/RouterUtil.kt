@@ -30,13 +30,12 @@ class RouterUtil : Bootstrap.Module {
     val jsPages = mutableListOf<JsPage>()
 
     /**
-     * Initializes the router: registers JS resource pages, installs a page decorator, and registers a special handler for KTS requests.
+     * Wires the HTML subsystem into the router by registering JS pages, installing a page decorator, and registering a KTS request handler.
      *
-     * Loads all "js" resources into JsPage instances and adds them as routes. Installs a page decorator that attaches CSS, ensures a default GET request,
-     * and conditionally runs Tailwind processing or registers JS metadata for pages that request them. Registers a special route handler that, for KtsPage targets,
-     * resolves trigger and target elements from the referenced route, assigns query and request data to the page, runs page middleware, and delegates to the router's response handler when appropriate.
+     * Registers routes for embedded "js" resources, decorates pages with CSS and a default GET request, applies optional Tailwind or KTS metadata processing,
+     * and registers a special handler that binds query, trigger, and target data for KtsPage requests and invokes page middleware or the router response handler.
      *
-     * @param ctx The bootstrap context containing the router to be configured.
+     * @param ctx The bootstrap context used to obtain and configure the router.
      */
     override fun onRouterCreated(ctx: Bootstrap.Context) {
         val router = ctx.router
