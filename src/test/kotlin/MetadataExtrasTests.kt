@@ -268,5 +268,4 @@ class MetadataExtrasTests {
         assertTrue(head.contains("&quot;onerror&quot;"))
         assertTrue(head.contains("&lt;xss&gt;"))
     }
-
 }

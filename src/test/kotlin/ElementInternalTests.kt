@@ -387,6 +387,7 @@ class ElementInternalTests {
         val el =
             object : Element("no-children") {
                 override fun render(): String = "<no-children />"
+
                 override val children: MutableList<Element>? = null
             }
 
@@ -394,5 +395,4 @@ class ElementInternalTests {
             el.unsafeHtml("<b>boom</b>")
         }
     }
-
 }

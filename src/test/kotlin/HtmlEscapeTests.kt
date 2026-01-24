@@ -5,7 +5,6 @@ import io.voidx.html.util.escapeHtmlText
 import kotlin.test.*
 
 class HtmlEscapeTests {
-
     @Test
     fun escape_html_attr_escapes_all_required_characters() {
         val input = """&"< >"""
