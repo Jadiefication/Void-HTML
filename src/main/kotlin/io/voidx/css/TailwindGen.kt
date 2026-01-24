@@ -377,7 +377,15 @@ operator fun <N, M> List<Pair<N, M>>.get(key: N): M? = firstOrNull { it.first ==
 data class TailwindString(
     val classes: String,
 ) {
-    /** Adds [classes] to the owning [Page.classAttributes] and returns the raw string. */
+    /**
+     * Registers the delegate's space-separated classes with the given page's classAttributes.
+     *
+     * Classes are split on whitespace and added to the page's classAttributes.
+     *
+     * @param ref The owning Page receiving the classes.
+     * @param property The delegated property's metadata.
+     * @return The original classes string.
+     */
     operator fun provideDelegate(
         ref: Page,
         property: KProperty<*>,
