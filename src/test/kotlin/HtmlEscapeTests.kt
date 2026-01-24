@@ -72,4 +72,13 @@ class HtmlEscapeTests {
 
         assertEquals("Hello &lt;b&gt;&amp; world&lt;/b&gt;", escaped)
     }
+
+    @Test
+    fun escape_html_attr_does_not_escape_single_quotes() {
+        val input = "it's a test"
+        val escaped = escapeHtmlAttr(input)
+
+        // Documents that single quotes are NOT escaped - safe only with double-quoted attributes
+        assertEquals("it's a test", escaped)
+    }
 }
