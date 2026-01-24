@@ -281,7 +281,6 @@ class Metadata internal constructor(
             append("<meta name=\"author\" content=\"${escapeHtmlAttr(copyright.first)}\">")
             append("<meta name=\"copyright\" content=\"${escapeHtmlAttr(copyright.second)}\">")
             append("<meta name=\"robots\" content=\"${escapeHtmlAttr(robotRules)}\">")
-            append("<meta name=\"theme-color\" content=\"${escapeHtmlAttr(themeColor)}\">")
 
             favicon?.let {
                 append("<link rel=\"icon\" href=\"${escapeHtmlAttr(it.first)}\" type=\"${escapeHtmlAttr(it.second)}\">")
