@@ -4,7 +4,7 @@ import io.voidx.html.exception.NoOutputException
 import java.io.File
 import java.nio.file.Files
 
-fun main(args: Array<String>) {
+internal fun main(args: Array<String>) {
     val output: File
     if (args.isNotEmpty()) {
         if (args.first() == "--output") {
