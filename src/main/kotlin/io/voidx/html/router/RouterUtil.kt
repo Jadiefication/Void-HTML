@@ -10,6 +10,8 @@ import io.voidx.html.Element
 import io.voidx.html.page.JsPage
 import io.voidx.html.page.KtsPage
 import io.voidx.html.page.addCssToRouter
+import io.voidx.html.page.includeKts
+import io.voidx.html.page.includeTailwind
 import io.voidx.html.page.metadata
 import io.voidx.router.Router
 import io.voidx.router.listResourcePaths
@@ -72,7 +74,7 @@ class RouterUtil : Bootstrap.Module {
                 page._trigger = trigger
                 page.request = requestDTO
 
-                page.middlewareProcessBefore(requestDTO.toResult())
+                page.middlewareProcessBefore()
                     ?: router.handleResponse(page, clientHandler, target)
             } else {
                 null

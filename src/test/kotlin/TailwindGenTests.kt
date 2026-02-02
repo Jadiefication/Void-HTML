@@ -10,6 +10,7 @@ import io.voidx.dto.buildRequest
 import io.voidx.fetch
 import io.voidx.html.fractal
 import io.voidx.html.generated.Div
+import io.voidx.html.page.classAttributes
 import io.voidx.html.page.html
 import io.voidx.html.page.metadata
 import io.voidx.page.Page
@@ -48,15 +49,20 @@ class TailwindGenTests {
                 route(page)
             }
 
-        val css =
+        val cssPage =
             router.routes
                 .filter { it.value is CssPage }
                 .values
                 .first()
                 .apply {
                     request = buildRequest { Method.GET }
-                }.content()
-                .body.body as String
+                }
+
+        val css = cssPage.content()
+            .body.body as String
+
+        assertNotNull(page.metadata?.style)
+        assertTrue((page.content().body.body as String).contains(cssPage.target))
 
         // ✅ real assertions
         assertTrue(css.contains(".flex"))

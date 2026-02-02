@@ -28,6 +28,50 @@ var Page.metadata: Metadata?
         attributes["metadata"] = value as Any
     }
 
+
+/** List of css classes. */
+val Page.classAttributes: MutableSet<String>
+    get() = attributes["attributes"] as? MutableSet<String> ?: let {
+        val set = mutableSetOf<String>()
+        it.attributes["attributes"] = set
+        set
+    }
+
+/**
+ * Names of external CSS resource files to include for this page.
+ *
+ * Use the Page invocation operator (page("style.css")) to populate this list with
+ * resources discovered under resources/css.
+ */
+val Page.cssFiles: MutableList<String>
+    get() = attributes["cssFiles"] as? MutableList<String> ?: let {
+        val set = mutableListOf<String>()
+        it.attributes["cssFiles"] = set
+        set
+    }
+
+/** Whether to include the compiled Tailwind. */
+var Page.includeTailwind: Boolean
+    get() = attributes["includeTailwind"] as? Boolean ?: let {
+        val set = true
+        it.attributes["includeTailwind"] = set
+        set
+    }
+    set(value) {
+        attributes["includeTailwind"] = value
+    }
+
+/** Whether to include the kts script. */
+var Page.includeKts: Boolean
+    get() = attributes["includeKts"] as? Boolean ?: let {
+        val set = true
+        it.attributes["includeKts"] = set
+        set
+    }
+    set(value) {
+        attributes["includeKts"] = value
+    }
+
 /**
  * Renders an HTML response by building a fractal [Element] tree and packaging it
  * into a [ResponseDTO]. If [metadata] is not set, a default one is created.
