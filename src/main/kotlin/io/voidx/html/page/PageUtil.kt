@@ -28,14 +28,14 @@ var Page.metadata: Metadata?
         attributes["metadata"] = value as Any
     }
 
-
 /** List of css classes. */
 val Page.classAttributes: MutableSet<String>
-    get() = attributes["attributes"] as? MutableSet<String> ?: let {
-        val set = mutableSetOf<String>()
-        it.attributes["attributes"] = set
-        set
-    }
+    get() =
+        attributes["attributes"] as? MutableSet<String> ?: let {
+            val set = mutableSetOf<String>()
+            it.attributes["attributes"] = set
+            set
+        }
 
 /**
  * Names of external CSS resource files to include for this page.
@@ -44,30 +44,33 @@ val Page.classAttributes: MutableSet<String>
  * resources discovered under resources/css.
  */
 val Page.cssFiles: MutableList<String>
-    get() = attributes["cssFiles"] as? MutableList<String> ?: let {
-        val set = mutableListOf<String>()
-        it.attributes["cssFiles"] = set
-        set
-    }
+    get() =
+        attributes["cssFiles"] as? MutableList<String> ?: let {
+            val set = mutableListOf<String>()
+            it.attributes["cssFiles"] = set
+            set
+        }
 
 /** Whether to include the compiled Tailwind. */
 var Page.includeTailwind: Boolean
-    get() = attributes["includeTailwind"] as? Boolean ?: let {
-        val set = true
-        it.attributes["includeTailwind"] = set
-        set
-    }
+    get() =
+        attributes["includeTailwind"] as? Boolean ?: let {
+            val set = true
+            it.attributes["includeTailwind"] = set
+            set
+        }
     set(value) {
         attributes["includeTailwind"] = value
     }
 
 /** Whether to include the kts script. */
 var Page.includeKts: Boolean
-    get() = attributes["includeKts"] as? Boolean ?: let {
-        val set = true
-        it.attributes["includeKts"] = set
-        set
-    }
+    get() =
+        attributes["includeKts"] as? Boolean ?: let {
+            val set = true
+            it.attributes["includeKts"] = set
+            set
+        }
     set(value) {
         attributes["includeKts"] = value
     }

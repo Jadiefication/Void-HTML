@@ -58,8 +58,10 @@ class TailwindGenTests {
                     request = buildRequest { Method.GET }
                 }
 
-        val css = cssPage.content()
-            .body.body as String
+        val css =
+            cssPage
+                .content()
+                .body.body as String
 
         assertNotNull(page.metadata?.style)
         assertTrue((page.content().body.body as String).contains(cssPage.target))
