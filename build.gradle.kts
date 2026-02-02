@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
-    implementation("com.github.Jadiefication:Void:v2.1.0")
+    implementation("com.github.Void-Framework:Void:v2.2.0")
 }
 
 tasks.test {
